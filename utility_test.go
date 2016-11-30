@@ -1,8 +1,8 @@
-package gorules_test
+package gorules
 
 import (
 	"testing"
-	//"fmt"
+
 	"github.com/stretchr/testify/assert"
 )
 
