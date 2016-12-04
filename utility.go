@@ -231,3 +231,16 @@ func getValue(m map[string]interface{}, path string) (bool, interface{}) {
 	}
 	return false, nil
 }
+
+func reverse(value []string) []string {
+	result := []string{}
+	for i := len(value) - 1; i >= 0; i-- {
+		result = append(result, value[i])
+	}
+	return result
+}
+
+func isEven(value int) bool{
+        return value % 2 == 0
+}
+

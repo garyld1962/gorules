@@ -6,7 +6,7 @@ type RuleSet struct {
 	rules []Rule
 }
 
-func (r RuleSet) Add(rule Rule) {
+func (r *RuleSet) Add(rule Rule) {
 	r.rules = append(r.rules, rule)
 }
 
@@ -22,7 +22,6 @@ func (r Rule) Evalute() (bool, error) {
 		/*
   for _, e := range r.expressions {
 
-	
 			var isTrue, err = e.evalute()
 			if err != nil {
 				return false, err
@@ -30,14 +29,13 @@ func (r Rule) Evalute() (bool, error) {
 			if !isTrue {
 				return false, nil
 			}
-		
+
 	}*/
 	return true, nil
 }
 
-func (r Rule) Add(expression *Expression) {
-	r.expressions = append(r.expressions, expression)
-}
+func (r *Rule) Add(expression *Expression) {
+	r.expressions = append(r.expressions, expression) }
 
- 
+
 

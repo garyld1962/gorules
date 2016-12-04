@@ -3,6 +3,9 @@
 *.a
 *.so
 
+*.swp
+*.swo
+
 # Folders
 _obj
 _test

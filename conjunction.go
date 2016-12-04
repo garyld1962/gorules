@@ -6,5 +6,5 @@ type Conjunction int
 
 const (
 	And Conjunction = iota
-	Or 
+	Or
 )
