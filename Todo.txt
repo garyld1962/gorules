@@ -1,0 +1,16 @@
+Make all utility functions return type (bool,err)
+
+Create a map/hash of string and func(string,string) (bool,err)
+
+Remove the evaluate.go and make the evaluations in value expressions evalutate functions
+
+The long switch has to be taken care of
+
+Need to take a design decision on whether two stepes of reductions are needed 
+ 1 ValueExpr -> True/False Expr -> bool
+ 2 SIngle reduce which has the entire logic of handling conjucation expr and value expr
+ the first option may be thought about in go-Routines
+ 
+ Design decision on whether to have (bool,err) type or a custom type
+ 
+ 
