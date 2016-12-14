@@ -12,8 +12,8 @@ func in(v, t string) bool {
 	return strings.Contains(v, t)
 }
 
-func equals(value, target string) bool {
-	return value == target
+func equals(value, target string) (bool,error) {
+	return value == target,nil
 }
 
 func isMatch(value, target string) (bool, error) {

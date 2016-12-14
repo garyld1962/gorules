@@ -1,9 +1,12 @@
 package gorules_test
 
 import (
+  "gorules"
 	"testing"
-	objects "github.com/stretchr/stew/objects"
+  "github.com/stretchr/testify/assert"
+  "fmt"
 )
+	// objects "github.com/stretchr/stew/objects"
 
 var testData = `{
   "id": 25,
@@ -27,13 +30,16 @@ var testData = `{
   "promos": []
 }`
 
-func TestValueFromJson(t *testing.T) {
 
-	m, _ := objects.NewMapFromJSON(testData)
-	value := m.Get("country").(string)
-	if string(value) != "USA" {
-		t.Error("country should return USA")
-	}
+func TestIsNull(t *testing.T) {
+
+	tt := gorules.CreateValueExpressionWithTarget("IsEqualTo", "", "one", "one")
+
+	ret, _ := tt.Evaluate()
+  fmt.Println(ret)
+
+	assert.True(t, ret, "Target should have been null")
+
 }
 
  

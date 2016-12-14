@@ -18,10 +18,10 @@ func (ve ValueExpressionEvaluator) Evaluate(ex Expression) (bool, error) {
 	fmt.Println(e.Operator)
 	switch e.Operator {
 	case "IsEqualTo":
-		return equals(e.Value, e.Target), nil
+		return equals(e.Value, e.Target)
 
-	case "IsNotEqualTo":
-		return !equals(e.Value, e.Target), nil
+	// case "IsNotEqualTo":
+	// 	return !equals(e.Value, e.Target), nil
 
 	case "IsGreater":
 		r, err := isGreater(e.Value, e.Target)

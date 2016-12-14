@@ -8,7 +8,7 @@ type Expression interface {
 }
 
 type ValueExpression struct {
-	Operator string `json:"operator"`
+	Operator Operator `json:"operator"`
 	Path     string `json:"path"`
 	Value    string `json:"value"`
 	Target   string `json:"target"`
@@ -16,16 +16,18 @@ type ValueExpression struct {
 
 // Evaluate ...
 func (v ValueExpression) Evaluate() (bool, error) {
-	return true, nil
+	fun:= FunctionList[v.Operator]
+	result,err  := fun(v.Value,v.Target)
+	return result, err
 }
 
 func CreateValueExpression(operator string, path string, value string) *ValueExpression {
-	expression := &ValueExpression{Operator: operator, Path: path, Value: value}
+	expression := &ValueExpression{Operator:Operator(operator), Path: path, Value: value}
 	return expression
 }
 
 func CreateValueExpressionWithTarget(operator string, path string, value string,target string) *ValueExpression {
-        expression := &ValueExpression{Operator: operator, Path: path, Value: value, Target:target}
+    expression := &ValueExpression{Operator: Operator(operator), Path: path, Value: value, Target:target}
 	return expression
 }
 

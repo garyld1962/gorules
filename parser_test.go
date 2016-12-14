@@ -1,13 +1,13 @@
 package gorules_test
 
 import (
-	"github.com/gorules"
+	"gorules"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	//"fmt"
 )
 
-var testData = `{
+var testData1 = `{
   "id": 25,
   "zip5": 33076,
   "zip3": 333,
@@ -40,7 +40,7 @@ var testData = `{
 
 //IF THIS country NOTEQUALS USA |AND| NOTEQUALS CANADA |AND| zip3 EQUALS "333"
 func TestValue(t *testing.T) {
-	m := gorules.ParseDSL("IF THIS country IsEqualTo USA |AND| IsNotEqualTo CANADA",testData)
+	m := gorules.ParseDSL("IF THIS country IsEqualTo USA |AND| IsNotEqualTo CANADA",testData1)
 	//x := gorules.GetKeyFromJSON(m,"testobj")
         //fmt.Println("Type: ",m)
 	assert.NotNil(t,m)
