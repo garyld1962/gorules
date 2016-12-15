@@ -1,15 +1,18 @@
 package gorules
 
 import (
-	objects "github.com/stretchr/stew/objects"
 	"strings"
+
+	"fmt"
+
+	objects "github.com/stretchr/stew/objects"
 )
 
 type Expressionable interface {
 	Parse(interface{}) (Expression, error)
 }
 
-type ruleStatement struct {
+type RuleStatement struct {
 	Branch   string `json:"branch"`
 	Selector string `json:"selector"`
 	Key      string `json:"key"`
@@ -17,8 +20,8 @@ type ruleStatement struct {
 	Target   string `json:"target"`
 }
 
-type conjunctionStatement struct {
-	Type Conjunction `json:"type"`
+type ConjunctionStatement struct {
+	Conjunction Conjunction `json:"type"`
 }
 
 type StrSlice []string
@@ -34,20 +37,26 @@ func (s StrSlice) GetOrEmpty(index int) string {
 	return s.GetOrDefault(index, "")
 }
 
-
-func (s *ruleStatement) Parse(data interface{}) (Expression, error) {
+func (s *RuleStatement) Parse(data interface{}) (Expression, error) {
 	dat := data.(objects.Map)
 	test := CreateValueExpressionWithTarget(s.Operator, "", GetKeyFromJSON(dat, s.Key), s.Target)
 	return test, nil
 }
 
-func (c *conjunctionStatement) Parse(_ interface{}) (Expression, error) {
-	return CreateAndExpression(True{}), nil
+func (c *ConjunctionStatement) Parse(_ interface{}) (Expression, error) {
+	switch c.Conjunction {
+	case And:
+		return CreateAndConjunctionExpression(True{}), nil
+	case Or:
+		return CreateAndConjunctionExpression(False{}), nil
+	default:
+		return CreateAndConjunctionExpression(True{}), nil
+	}
 }
 
-func CreateRuleStatement(input string) *ruleStatement {
+func CreateRuleStatement(input string) *RuleStatement {
 	parsed := StrSlice(reverse(strings.Split(input, " ")))
-	rule := &ruleStatement{Target: parsed.GetOrEmpty(0),
+	rule := &RuleStatement{Target: parsed.GetOrEmpty(0),
 		Operator: parsed.GetOrEmpty(1),
 		Key:      parsed.GetOrDefault(2, "data"),
 		Selector: parsed.GetOrDefault(3, "THIS"),
@@ -55,11 +64,12 @@ func CreateRuleStatement(input string) *ruleStatement {
 	return rule
 }
 
-
-func CreateConjunctionStatement(input string) *conjunctionStatement {
-	if input == "AND" {
-		return &conjunctionStatement{Type: 1}
+// CreateConjunctionStatement Creates Conjunction Statement from string
+func CreateConjunctionStatement(input string) *ConjunctionStatement {
+	conjunction, err := ToConjunction(input)
+	fmt.Println(conjunction)
+	if err != nil {
+		panic(err)
 	}
-	return &conjunctionStatement{Type: 2}
+	return &ConjunctionStatement{Conjunction: conjunction}
 }
-

@@ -46,3 +46,50 @@ func GetKeyFromJSON(obj objects.Map, key string) string {
 		return "default"
 	}
 }
+
+// func selectValue(m map[string]interface{}, path string) interface{} {
+
+// 	propertyNames := strings.Split(path, ".")
+// 	// we only have one path element so return what we have
+// 	if len(propertyNames) == 1 {
+// 		return m[propertyNames[0]]
+// 	}
+// 	// create map using propertyName as a key and the []interface{} as a value
+// 	m1 := make(map[string]interface{})
+// 	m1[propertyNames[0]] = m[propertyNames[0]]
+// 	// create a new path with the remainder of the parts.
+// 	newPath := strings.Join(propertyNames[2:], ",")
+// 	return selectValue(m1, newPath)
+// }
+
+// func ReduceRuleToBool(accum Expression, expressions []*Expression) bool {
+// 	var expr Expression
+// 	if len(expressions) == 0 {
+// 		value, _ := accum.Evaluate()
+// 		return value
+// 	}
+
+// 	expr = expressions[0]
+// 	if IsConjunctionExpression(expr) {
+
+// 	}
+
+// 	// var result bool
+// 	// var current_conjunction ConjunctionExpression
+// 	// accum = CreateOrExpression(False{})
+
+// 	// for _, e := range rule.expressions {
+// 	// 	expr := *e
+// 	// 	if IsConjunctionExpression(expr) {
+// 	// 		result, _ = accum.Evaluate()
+// 	// 		if result {
+// 	// 			accum = True{}
+// 	// 		} else {
+// 	// 			accum = False{}
+// 	// 		}
+// 	// 	} else {
+// 	// 		accum.Add(&expr)
+// 	// 	}
+// 	// }
+// 	return true
+// }

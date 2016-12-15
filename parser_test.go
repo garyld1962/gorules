@@ -1,6 +1,7 @@
 package gorules_test
 
 import (
+	"fmt"
 	"gorules"
 	"testing"
 
@@ -40,9 +41,21 @@ var parserTestData = `{
 }`
 
 //IF THIS country NOTEQUALS USA |AND| NOTEQUALS CANADA |AND| zip3 EQUALS "333"
-func TestValue(t *testing.T) {
-	m := gorules.ParseDSL("IF THIS country IsEqualTo USA |AND| IsEqualTo CANADA", parserTestData)
+// // func TestValue(t *testing.T) {
+// // 	m := gorules.ParseDSL("IF THIS country IsEqualTo USA |AND| IsEqualTo CANADA", parserTestData)
+// // 	//x := gorules.GetKeyFromJSON(m,"testobj")
+// // 	//fmt.Println("Type: ",m)
+// // 	assert.NotNil(t, m)
+// // }
+
+func TestReduceRuleToBool(t *testing.T) {
+	var rle = &gorules.Rule{}
+	exp := gorules.CreateConjunctionStatement("AND")
+	parsed, _ := exp.Parse(exp)
+	fmt.Println("pared", exp)
+	rle.Add(&parsed)
+	// m := gorules.ReduceRuleToBool(*rle)
 	//x := gorules.GetKeyFromJSON(m,"testobj")
-	//fmt.Println("Type: ",m)
-	assert.NotNil(t, m)
+	// fmt.Println("Type: ", m)
+	assert.NotNil(t, nil)
 }
