@@ -1,6 +1,5 @@
 package gorules
 
-
 // RuleSet ...
 type RuleSet struct {
 	rules []Rule
@@ -11,7 +10,7 @@ func (r *RuleSet) Add(rule Rule) {
 }
 
 func (r RuleSet) Evalute() (bool, error) {
-  return true, nil;
+	return true, nil
 }
 
 type Rule struct {
@@ -19,23 +18,21 @@ type Rule struct {
 }
 
 func (r Rule) Evalute() (bool, error) {
-		/*
-  for _, e := range r.expressions {
+	/*
+		  for _, e := range r.expressions {
 
-			var isTrue, err = e.evalute()
-			if err != nil {
-				return false, err
-			}
-			if !isTrue {
-				return false, nil
-			}
+					var isTrue, err = e.evalute()
+					if err != nil {
+						return false, err
+					}
+					if !isTrue {
+						return false, nil
+					}
 
-	}*/
+			}*/
 	return true, nil
 }
 
 func (r *Rule) Add(expression *Expression) {
-	r.expressions = append(r.expressions, expression) }
-
-
-
+	r.expressions = append(r.expressions, expression)
+}

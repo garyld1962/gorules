@@ -2,9 +2,10 @@ package gorules_test
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	 rules "gorules"
+	rules "gorules"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsEqual(t *testing.T) {

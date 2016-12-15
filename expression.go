@@ -1,34 +1,41 @@
 package gorules
 
-//import (
-	//"fmt"
-//)
 type Expression interface {
 	Evaluate() (bool, error)
 }
 
+type ConjunctionExpression interface {
+	Add(*Expression)
+}
+
 type ValueExpression struct {
 	Operator Operator `json:"operator"`
-	Path     string `json:"path"`
-	Value    string `json:"value"`
-	Target   string `json:"target"`
+	Path     string   `json:"path"`
+	Value    string   `json:"value"`
+	Target   string   `json:"target"`
 }
 
 // Evaluate ...
 func (v ValueExpression) Evaluate() (bool, error) {
-	fun:= FunctionList[v.Operator]
-	result,err  := fun(v.Value,v.Target)
+	fun := FunctionList[v.Operator]
+	result, err := fun(v.Value, v.Target)
 	return result, err
 }
 
-func CreateValueExpression(operator string, path string, value string) *ValueExpression {
-	expression := &ValueExpression{Operator:Operator(operator), Path: path, Value: value}
-	return expression
+func CreateValueExpression(operatorText string, path string, value string) *ValueExpression {
+	operator, err := ToOperator(operatorText)
+	if err == nil {
+		return &ValueExpression{Operator: operator, Path: path, Value: value}
+	}
+	panic(err)
 }
 
-func CreateValueExpressionWithTarget(operator string, path string, value string,target string) *ValueExpression {
-    expression := &ValueExpression{Operator: Operator(operator), Path: path, Value: value, Target:target}
-	return expression
+func CreateValueExpressionWithTarget(operatorText string, path string, value string, target string) *ValueExpression {
+	operator, err := ToOperator(operatorText)
+	if err == nil {
+		return &ValueExpression{Operator: operator, Path: path, Value: value, Target: target}
+	}
+	panic(err)
 }
 
 func CreateAndExpression(e Expression) *AndExpression {
@@ -41,7 +48,7 @@ func CreateAndExpression(e Expression) *AndExpression {
 func CreateOrExpression(e Expression) *OrExpression {
 	o := &OrExpression{}
 	o.expressions = make([]*Expression, 1)
-        o.Add(&e)
+	o.Add(&e)
 	return o
 }
 

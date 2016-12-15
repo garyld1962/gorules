@@ -1,10 +1,14 @@
-Make all utility functions return type (bool,err)
++ Make all utility functions return type (bool,err)
 
-Create a map/hash of string and func(string,string) (bool,err)
++ Create a map/hash of string and func(string,string) (bool,err)
 
-Remove the evaluate.go and make the evaluations in value expressions evalutate functions
++ Remove the evaluate.go and make the evaluations in value expressions evalutate functions
 
-The long switch has to be taken care of
++ The long switch has to be taken care of
+
+- reduce rule to a Bool  with a reduction functions
+
+"Everything is a expression"
 
 Need to take a design decision on whether two stepes of reductions are needed 
  1 ValueExpr -> True/False Expr -> bool
@@ -13,6 +17,6 @@ Need to take a design decision on whether two stepes of reductions are needed
  
  Design decision on whether to have (bool,err) type or a custom type
 
- Evething is a expression
+
  
  

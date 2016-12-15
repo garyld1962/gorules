@@ -2,30 +2,34 @@ package gorules
 
 import (
 	"fmt"
-	objects "github.com/stretchr/stew/objects"
 	"strings"
+
+	objects "github.com/stretchr/stew/objects"
 )
 
-func ParseDSL(dslExpr string, data string) []string {
-	lst := strings.Split(dslExpr, "|")
+const dslSeperator = "|"
+
+//ParseDSL parses simple DSL to Rule (array of Expressions)
+func ParseDSL(dslText string, data string) *Rule {
+	lst := strings.Split(dslText, dslSeperator)
 	m, _ := objects.NewMapFromJSON(data)
-	var rle =&Rule{}
+	var rle = &Rule{}
 	var exp Expressionable
-	for l, x := range lst {
-                // Even elements are rules; odd are conjunctions
-		if isEven(l) {
-			exp = CreateRuleStatement(strings.TrimSpace(x))
-		} else {
+	for _, x := range lst {
+		if IsConjunction(x) {
 			exp = CreateConjunctionStatement(x)
+		} else {
+			exp = CreateRuleStatement(strings.TrimSpace(x))
 		}
 		parsed, _ := exp.Parse(m)
-                fmt.Println("pared",parsed)
+		fmt.Println("pared", parsed)
 		rle.Add(&parsed)
 	}
-        fmt.Println(rle)
-	return lst
+	fmt.Println(rle)
+	return rle
 }
 
+//GetKeyFromJSON get the value for key in JSON
 func GetKeyFromJSON(obj objects.Map, key string) string {
 	value := obj.Get(key)
 	//fmt.Println(key,value)
