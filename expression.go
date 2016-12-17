@@ -4,10 +4,6 @@ type Expression interface {
 	Evaluate() (bool, error)
 }
 
-// type ConjunctionExpression interface {
-// 	Add(*Expression)
-// }
-
 type ValueExpression struct {
 	Operator Operator `json:"operator"`
 	Path     string   `json:"path"`
@@ -76,46 +72,6 @@ func IsConjunctionExpression(expr Expression) bool {
 	_, ok := expr.(*ConjunctionExpression)
 	return ok
 }
-
-// func CreateAndExpression(e Expression) *AndExpression {
-// 	a := &AndExpression{}
-// 	a.expressions = make([]*Expression, 1)
-// 	a.Add(&e)
-// 	return a
-// }
-
-// func CreateOrExpression(e Expression) *OrExpression {
-// 	o := &OrExpression{}
-// 	o.expressions = make([]*Expression, 1)
-// 	o.Add(&e)
-// 	return o
-// }
-
-// type AndExpression struct {
-// 	expressions []*Expression
-// }
-
-// func (v AndExpression) Evaluate() (bool, error) {
-// 	return true, nil
-// }
-
-// func (v *AndExpression) Add(e *Expression) {
-// 	v.expressions = append(v.expressions, e)
-// }
-
-// type OrExpression struct {
-// 	expressions []*Expression
-// }
-
-// func (o OrExpression) Evaluate() (bool, error) {
-// 	return true, nil
-// }
-
-// func (v *OrExpression) Add(e *Expression) {
-// 	v.expressions = append(v.expressions, e)
-// }
-
-//-------------------------------------
 
 type BoolValueExpression struct {
 	Type bool `json:"type"`
