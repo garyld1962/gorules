@@ -46,11 +46,11 @@ func (s *RuleStatement) Parse(data interface{}) (Expression, error) {
 func (c *ConjunctionStatement) Parse(_ interface{}) (Expression, error) {
 	switch c.Conjunction {
 	case And:
-		return CreateAndConjunctionExpression(True{}), nil
+		return CreateAndConjunctionExpression(TrueExpression), nil
 	case Or:
-		return CreateAndConjunctionExpression(False{}), nil
+		return CreateAndConjunctionExpression(FalseExpression), nil
 	default:
-		return CreateAndConjunctionExpression(True{}), nil
+		return CreateAndConjunctionExpression(TrueExpression), nil
 	}
 }
 

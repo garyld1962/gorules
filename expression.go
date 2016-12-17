@@ -1,9 +1,5 @@
 package gorules
 
-import (
-	"fmt"
-)
-
 type Expression interface {
 	Evaluate() (bool, error)
 }
@@ -21,12 +17,12 @@ type ValueExpression struct {
 
 // Evaluate ...
 func (v ValueExpression) Evaluate() (bool, error) {
-	fun := OperatorFuncList[v.Operator]
-	result, err := fun(v.Value, v.Target)
+	operatorFunc := OperatorFuncList[v.Operator]
+	result, err := operatorFunc(v.Value, v.Target)
 	return result, err
 }
 
-func CreateValueExpression(operatorText string, path string, value string) *ValueExpression {
+func CreateValueExpression(operatorText string, path string, value string) Expression {
 	operator, err := ToOperator(operatorText)
 	if err == nil {
 		return &ValueExpression{Operator: operator, Path: path, Value: value}
@@ -34,7 +30,7 @@ func CreateValueExpression(operatorText string, path string, value string) *Valu
 	panic(err)
 }
 
-func CreateValueExpressionWithTarget(operatorText string, path string, value string, target string) *ValueExpression {
+func CreateValueExpressionWithTarget(operatorText string, path string, value string, target string) Expression {
 	operator, err := ToOperator(operatorText)
 	if err == nil {
 		return &ValueExpression{Operator: operator, Path: path, Value: value, Target: target}
@@ -49,16 +45,28 @@ type ConjunctionExpression struct {
 
 // Evaluate ...
 func (v ConjunctionExpression) Evaluate() (bool, error) {
-	return true, nil
+
+	evaluator, accumlator := ConjunctionExpressionProps(v.Conjunction)
+
+	for _, e := range v.Expressions {
+		var isTrue, _ = evaluator(accumlator, (*e))
+		accumlator = CreateBoolExpression(isTrue)
+	}
+	return accumlator.Evaluate()
 }
 
-func CreateAndConjunctionExpression(expr Expression) Expression {
-	conj := &ConjunctionExpression{Conjunction: And}
-	conj.Expressions = make([]*Expression, 1)
-	conj.Add(&expr)
-	fmt.Println("expr", expr, conj)
-	return conj
+func CreateConjunctionExpression(conjunction Conjunction) func(Expression) Expression {
+	return func(expr Expression) Expression {
+		conj := &ConjunctionExpression{Conjunction: conjunction}
+		conj.Expressions = make([]*Expression, 1)
+		conj.Add(&expr)
+		return conj
+	}
 }
+
+var CreateAndConjunctionExpression func(Expression) Expression = CreateConjunctionExpression(And)
+
+var CreateOrConjunctionExpression func(Expression) Expression = CreateConjunctionExpression(Or)
 
 func (conj *ConjunctionExpression) Add(expr *Expression) {
 	conj.Expressions = append(conj.Expressions, expr)
@@ -109,18 +117,28 @@ func IsConjunctionExpression(expr Expression) bool {
 
 //-------------------------------------
 
-type True struct {
+type BoolValueExpression struct {
+	Type bool `json:"type"`
 }
 
-func (v True) Evaluate() (bool, error) {
-	return true, nil
-}
-
-type False struct {
-}
-
-func (v False) Evaluate() (bool, error) {
+func (v BoolValueExpression) Evaluate() (bool, error) {
+	if v.Type {
+		return true, nil
+	}
 	return false, nil
 }
+
+func CreateBoolExpression(bool_type bool) Expression {
+	if bool_type {
+		return &BoolValueExpression{Type: true}
+	}
+	return &BoolValueExpression{Type: false}
+}
+
+// TrueExpression always evaluates to True
+var TrueExpression = CreateBoolExpression(true)
+
+// FalseExpression always evaluates to False
+var FalseExpression = CreateBoolExpression(false)
 
 //-------------------------------------

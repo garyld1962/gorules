@@ -4,12 +4,8 @@ import (
 	"gorules"
 	"testing"
 
-	"fmt"
-
 	"github.com/stretchr/testify/assert"
 )
-
-// objects "github.com/stretchr/stew/objects"
 
 var testData = `{
   "id": 25,
@@ -33,19 +29,18 @@ var testData = `{
   "promos": []
 }`
 
-// func TestIsNull(t *testing.T) {
-
-// 	tt := gorules.CreateValueExpressionWithTarget("IsEqualTo", "", "one", "one")
-
-// 	ret, _ := tt.Evaluate()
-// 	fmt.Println(ret)
-
-// 	assert.True(t, ret, "Target should have been null")
-
-// }
-
-func TestIsConjunctionExpression(t *testing.T) {
-	tests := gorules.CreateAndConjunctionExpression(gorules.True{})
-	fmt.Println("tests", tests)
+func TestAndIsConjunctionExpression(t *testing.T) {
+	// trueExpr = gorules.
+	tests := gorules.CreateAndConjunctionExpression(gorules.TrueExpression)
 	assert.True(t, gorules.IsConjunctionExpression(tests))
+}
+
+func TestOrIsConjunctionExpression(t *testing.T) {
+	tests := gorules.CreateOrConjunctionExpression(gorules.FalseExpression)
+	assert.True(t, gorules.IsConjunctionExpression(tests))
+}
+
+func TestIsConjunctionExpressionFail(t *testing.T) {
+	tests := gorules.CreateValueExpressionWithTarget("IsEqualTo", "test", "USA", "USA")
+	assert.False(t, gorules.IsConjunctionExpression(tests))
 }
