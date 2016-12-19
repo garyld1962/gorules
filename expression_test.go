@@ -1,4 +1,4 @@
-package gorules_test
+package gorules
 
 import (
 	"gorules"
@@ -30,17 +30,16 @@ var testData = `{
 }`
 
 func TestAndIsConjunctionExpression(t *testing.T) {
-	// trueExpr = gorules.
-	tests := gorules.CreateAndConjunctionExpression(gorules.TrueExpression)
-	assert.True(t, gorules.IsConjunctionExpression(tests))
+	tests := CreateAndConjunctionExpression(&gorules.TrueExpression)
+	assert.True(t, isConjunctionExpression(tests))
 }
 
 func TestOrIsConjunctionExpression(t *testing.T) {
-	tests := gorules.CreateOrConjunctionExpression(gorules.FalseExpression)
-	assert.True(t, gorules.IsConjunctionExpression(tests))
+	tests := CreateOrConjunctionExpression(&gorules.FalseExpression)
+	assert.True(t, isConjunctionExpression(tests))
 }
 
 func TestIsConjunctionExpressionFail(t *testing.T) {
-	tests := gorules.CreateValueExpressionWithTarget("IsEqualTo", "test", "USA", "USA")
-	assert.False(t, gorules.IsConjunctionExpression(tests))
+	tests := CreateValueExpressionWithTarget("IsEqualTo", "test", "USA", "USA")
+	assert.False(t, isConjunctionExpression(tests))
 }

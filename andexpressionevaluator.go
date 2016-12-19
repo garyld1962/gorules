@@ -1,6 +1,5 @@
 package gorules
 
-
 type AndExpressionEvaluator struct {
 }
 

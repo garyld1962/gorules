@@ -6,9 +6,11 @@
 
 + The long switch has to be taken care of
 
-- reduce rule to a Bool  with a reduction functions
++ reduced A rule to a bool (Ah finally)
 
-"Everything is a expression"
+- Collection expression (ANY,SOME)
+
+"Everything is a expression" -- Needs a lot more ideas on making this work
 
 Need to take a design decision on whether two stepes of reductions are needed 
  1 ValueExpr -> True/False Expr -> bool

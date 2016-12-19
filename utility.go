@@ -12,8 +12,8 @@ func in(v, t string) bool {
 	return strings.Contains(v, t)
 }
 
-func equals(value, target string) (bool,error) {
-	return value == target,nil
+func equals(value, target string) (bool, error) {
+	return value == target, nil
 }
 
 func isMatch(value, target string) (bool, error) {
@@ -240,7 +240,6 @@ func reverse(value []string) []string {
 	return result
 }
 
-func isEven(value int) bool{
-        return value % 2 == 0
+func isEven(value int) bool {
+	return value%2 == 0
 }
-

@@ -2,8 +2,6 @@ package gorules
 
 import "fmt"
 
-//go:generate stringer -type=Conjunction
-
 // Conjunction type
 type Conjunction int
 

@@ -14,8 +14,8 @@ var parserTestData = `{
   "zip5": 33076,
   "zip3": 333,
   "state": "FL",
-  "country": "SA",
-  "subtotal": 25.00,
+  "country": "USA",
+  "subtotal": "25.00",
   "promoamount": 1.00,
   "testobj":{
       "id": 3,
@@ -41,12 +41,10 @@ var parserTestData = `{
 }`
 
 //IF THIS country NOTEQUALS USA |AND| NOTEQUALS CANADA |AND| zip3 EQUALS "333"
-// // func TestValue(t *testing.T) {
-// // 	m := gorules.ParseDSL("IF THIS country IsEqualTo USA |AND| IsEqualTo CANADA", parserTestData)
-// // 	//x := gorules.GetKeyFromJSON(m,"testobj")
-// // 	//fmt.Println("Type: ",m)
-// // 	assert.NotNil(t, m)
-// // }
+func TestValue(t *testing.T) {
+	m := gorules.ParseDSL("IF THIS country IsEqualTo USA |AND| IF THIS country IsEqualTo USA |AND| IF THIS state IsEqualTo FL |AND| IF THIS subtotal IsEqualTo 25.00", parserTestData)
+	assert.NotNil(t, m)
+}
 
 func TestReduceRuleToBool(t *testing.T) {
 	var rle = &gorules.Rule{}
@@ -54,8 +52,5 @@ func TestReduceRuleToBool(t *testing.T) {
 	parsed, _ := exp.Parse(exp)
 	fmt.Println("pared", exp)
 	rle.Add(&parsed)
-	// m := gorules.ReduceRuleToBool(*rle)
-	//x := gorules.GetKeyFromJSON(m,"testobj")
-	// fmt.Println("Type: ", m)
 	assert.NotNil(t, nil)
 }

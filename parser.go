@@ -22,10 +22,10 @@ func ParseDSL(dslText string, data string) *Rule {
 			exp = CreateRuleStatement(strings.TrimSpace(x))
 		}
 		parsed, _ := exp.Parse(m)
-		fmt.Println("pared", parsed)
 		rle.Add(&parsed)
 	}
-	fmt.Println(rle)
+	boo := ReduceRuleToBool(CreateOrConjunctionExpression(&FalseExpression), rle.expressions)
+	fmt.Println("Output", boo)
 	return rle
 }
 
@@ -47,49 +47,28 @@ func GetKeyFromJSON(obj objects.Map, key string) string {
 	}
 }
 
-// func selectValue(m map[string]interface{}, path string) interface{} {
+func ReduceRuleToBool(accum Expression, expressions []*Expression) bool {
+	if len(expressions) == 0 {
+		fmt.Println("accum", accum)
+		value, _ := accum.Evaluate()
+		return value
+	}
 
-// 	propertyNames := strings.Split(path, ".")
-// 	// we only have one path element so return what we have
-// 	if len(propertyNames) == 1 {
-// 		return m[propertyNames[0]]
-// 	}
-// 	// create map using propertyName as a key and the []interface{} as a value
-// 	m1 := make(map[string]interface{})
-// 	m1[propertyNames[0]] = m[propertyNames[0]]
-// 	// create a new path with the remainder of the parts.
-// 	newPath := strings.Join(propertyNames[2:], ",")
-// 	return selectValue(m1, newPath)
-// }
+	expr := *expressions[0]
 
-// func ReduceRuleToBool(accum Expression, expressions []*Expression) bool {
-// 	var expr Expression
-// 	if len(expressions) == 0 {
-// 		value, _ := accum.Evaluate()
-// 		return value
-// 	}
+	if isConjunctionExpression(expr) {
+		conj, _ := expr.(*ConjunctionExpression)
+		isTrue, _ := accum.Evaluate()
+		boolExpr := CreateBoolExpression(isTrue)
+		conj.Add(&boolExpr)
+		accum = conj
+	} else {
+		conj, _ := accum.(*ConjunctionExpression)
+		isTrue, _ := expr.Evaluate()
+		boolExpr := CreateBoolExpression(isTrue)
+		conj.Add(&boolExpr)
+		accum = conj
+	}
 
-// 	expr = expressions[0]
-// 	if IsConjunctionExpression(expr) {
-
-// 	}
-
-// 	// var result bool
-// 	// var current_conjunction ConjunctionExpression
-// 	// accum = CreateOrExpression(False{})
-
-// 	// for _, e := range rule.expressions {
-// 	// 	expr := *e
-// 	// 	if IsConjunctionExpression(expr) {
-// 	// 		result, _ = accum.Evaluate()
-// 	// 		if result {
-// 	// 			accum = True{}
-// 	// 		} else {
-// 	// 			accum = False{}
-// 	// 		}
-// 	// 	} else {
-// 	// 		accum.Add(&expr)
-// 	// 	}
-// 	// }
-// 	return true
-// }
+	return ReduceRuleToBool(accum, expressions[1:])
+}

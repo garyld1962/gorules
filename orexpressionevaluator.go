@@ -1,6 +1,5 @@
 package gorules
 
-
 type OrExpressionEvaluator struct {
 }
 

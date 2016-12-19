@@ -1,5 +1,9 @@
 package gorules
 
+import (
+	"fmt"
+)
+
 type Expression interface {
 	Evaluate() (bool, error)
 }
@@ -42,53 +46,54 @@ type ConjunctionExpression struct {
 // Evaluate ...
 func (v ConjunctionExpression) Evaluate() (bool, error) {
 
-	evaluator, accumlator := ConjunctionExpressionProps(v.Conjunction)
+	evaluator, accumlator := ConjunctionExprProperties(v.Conjunction)
 
 	for _, e := range v.Expressions {
-		var isTrue, _ = evaluator(accumlator, (*e))
-		accumlator = CreateBoolExpression(isTrue)
+		var resultBool, _ = evaluator(accumlator, (*e))
+		fmt.Println("eval", resultBool, (*e))
+		accumlator = CreateBoolExpression(resultBool)
 	}
 	return accumlator.Evaluate()
 }
 
-func CreateConjunctionExpression(conjunction Conjunction) func(Expression) Expression {
-	return func(expr Expression) Expression {
+func CreateConjunctionExpression(conjunction Conjunction) func(*Expression) Expression {
+	return func(expr *Expression) Expression {
 		conj := &ConjunctionExpression{Conjunction: conjunction}
-		conj.Expressions = make([]*Expression, 1)
-		conj.Add(&expr)
+		conj.Add(expr)
 		return conj
 	}
 }
 
-var CreateAndConjunctionExpression func(Expression) Expression = CreateConjunctionExpression(And)
+var CreateAndConjunctionExpression func(*Expression) Expression = CreateConjunctionExpression(And)
 
-var CreateOrConjunctionExpression func(Expression) Expression = CreateConjunctionExpression(Or)
+var CreateOrConjunctionExpression func(*Expression) Expression = CreateConjunctionExpression(Or)
 
 func (conj *ConjunctionExpression) Add(expr *Expression) {
 	conj.Expressions = append(conj.Expressions, expr)
 }
 
-func IsConjunctionExpression(expr Expression) bool {
+func isConjunctionExpression(expr Expression) bool {
 	_, ok := expr.(*ConjunctionExpression)
 	return ok
 }
 
-type BoolValueExpression struct {
-	Type bool `json:"type"`
-}
+// BoolValueExpression stores either true or false value as an Expression
+type BoolValueExpression bool
 
+// Evaluate makes BoolValueExpression implement Expression
 func (v BoolValueExpression) Evaluate() (bool, error) {
-	if v.Type {
+	if v {
 		return true, nil
 	}
 	return false, nil
 }
 
-func CreateBoolExpression(bool_type bool) Expression {
-	if bool_type {
-		return &BoolValueExpression{Type: true}
+// CreateBoolExpression creates a BoolValueExpression with a bool
+func CreateBoolExpression(boolType bool) Expression {
+	if boolType {
+		return BoolValueExpression(true)
 	}
-	return &BoolValueExpression{Type: false}
+	return BoolValueExpression(false)
 }
 
 // TrueExpression always evaluates to True

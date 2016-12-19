@@ -32,14 +32,15 @@ func OrEvaluator(expr_one Expression, expr_two Expression) (bool, error) {
 	return isOneTrue || isTwoTrue, nil
 }
 
-func ConjunctionFunction(conjunction Conjunction) ConjunctionFunc {
+func conjunctionFunction(conjunction Conjunction) ConjunctionFunc {
 	return conjunctionFuncList[conjunction]
 }
 
-func IdentityBool(conjuntion Conjunction) Expression {
+func identityBool(conjuntion Conjunction) Expression {
 	return IdentityBoolForConjunction[conjuntion]
 }
 
-func ConjunctionExpressionProps(conjunction Conjunction) (ConjunctionFunc, Expression) {
-	return ConjunctionFunction(conjunction), IdentityBool(conjunction)
+// ConjunctionExprProperties returns the conjuntion function used for evaluation and the seed value
+func ConjunctionExprProperties(conjunction Conjunction) (ConjunctionFunc, Expression) {
+	return conjunctionFunction(conjunction), identityBool(conjunction)
 }

@@ -20,13 +20,12 @@ func TestGetNumber(t *testing.T) {
 
 }
 
-func TestEquals (t *testing.T) {
+func TestEquals(t *testing.T) {
 
-  v := "test"
-  s := "test"
-  assert.Equal(t,v,s,"values are not equal")
-  s = "me"
-  assert.NotEqual(t,v,s,"values are should not be equal")
+	v := "test"
+	s := "test"
+	assert.Equal(t, v, s, "values are not equal")
+	s = "me"
+	assert.NotEqual(t, v, s, "values are should not be equal")
 
 }
-
