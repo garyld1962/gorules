@@ -1,10 +1,7 @@
 package gorules
 
-import (
-	"strings"
-
-	objects "github.com/stretchr/stew/objects"
-)
+import "strings"
+import "fmt"
 
 //Expressionable is the abstraction of any structure that can be converted to Expression
 type Expressionable interface {
@@ -15,15 +12,20 @@ type Expressionable interface {
 type RuleStatement struct {
 	Branch   string `json:"branch"`
 	Selector string `json:"selector"`
-	Key      string `json:"key"`
+	Path     string `json:"path"`
 	Operator string `json:"operator"`
 	Target   string `json:"target"`
 }
 
 // Parse makes the RuleStatement Expressionable
-func (s *RuleStatement) Parse(data interface{}) (Expression, error) {
-	dataAsObjectMap := data.(objects.Map)
-	return CreateValueExpressionWithTarget(s.Operator, "", GetKeyFromJSON(dataAsObjectMap, s.Key), s.Target), nil
+func (ruleStatement *RuleStatement) Parse(data interface{}) (Expression, error) {
+	if IsSelector(ruleStatement.Selector) {
+		selector, _ := ToSelector(ruleStatement.Selector)
+		selectionFunction := selectorFunctions(selector)
+		return selectionFunction(ruleStatement, data), nil
+	}
+	_, err := ToSelector(ruleStatement.Selector)
+	return nil, err
 }
 
 // CreateRuleStatement creates a RuleStatement with defaults
@@ -31,13 +33,14 @@ func CreateRuleStatement(input string) *RuleStatement {
 	parsed := StrSlice(reverse(strings.Split(input, " ")))
 	rule := &RuleStatement{Target: parsed.GetOrEmpty(0),
 		Operator: parsed.GetOrEmpty(1),
-		Key:      parsed.GetOrDefault(2, "data"),
+		Path:     parsed.GetOrDefault(2, "data"),
 		Selector: parsed.GetOrDefault(3, "THIS"),
 		Branch:   parsed.GetOrDefault(4, "IF")}
+	fmt.Println(parsed)
 	return rule
 }
 
-// CreateRuleStatement creates a RuleStatement with defaults
+// CreateRuleStatementFromExisting creates a RuleStatement with defaults
 func CreateRuleStatementFromExisting(existingRule Expressionable, input string) *RuleStatement {
 	parsed := StrSlice(reverse(strings.Split(input, " ")))
 	var rule *RuleStatement
@@ -45,14 +48,13 @@ func CreateRuleStatementFromExisting(existingRule Expressionable, input string) 
 		existingRulevalue := existingRule.(*RuleStatement)
 		rule = &RuleStatement{Target: parsed.GetOrEmpty(0),
 			Operator: parsed.GetOrDefault(1, existingRulevalue.Operator),
-			Key:      parsed.GetOrDefault(2, existingRulevalue.Key),
+			Path:     parsed.GetOrDefault(2, existingRulevalue.Path),
 			Selector: parsed.GetOrDefault(3, existingRulevalue.Selector),
 			Branch:   parsed.GetOrDefault(4, existingRulevalue.Branch)}
 
 	} else {
 		rule = CreateRuleStatement(input)
 	}
-	// fmt.Println("Addres", &rule)
 	return rule
 }
 

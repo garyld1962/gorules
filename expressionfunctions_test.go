@@ -1,20 +1,12 @@
 package gorules_test
 
-import (
-	"fmt"
-	rules "gorules"
-	"testing"
+// func TestIsEqual(t *testing.T) {
 
-	"github.com/stretchr/testify/assert"
-)
+// 	tt := rules.CreateValueExpressionWithTarget("IsEqualTo", "", "one", "one")
 
-func TestIsEqual(t *testing.T) {
+// 	ret, _ := tt.Evaluate()
+// 	fmt.Println(ret)
 
-	tt := rules.CreateValueExpressionWithTarget("IsEqualTo", "", "one", "one")
+// 	assert.True(t, ret, "Target should have been null")
 
-	ret, _ := tt.Evaluate()
-	fmt.Println(ret)
-
-	assert.True(t, ret, "Target should have been null")
-
-}
+// }

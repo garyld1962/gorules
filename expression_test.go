@@ -1,12 +1,5 @@
 package gorules
 
-import (
-	"gorules"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-)
-
 var testData = `{
   "id": 25,
   "zip5": 33076,
@@ -29,17 +22,17 @@ var testData = `{
   "promos": []
 }`
 
-func TestAndIsConjunctionExpression(t *testing.T) {
-	tests := CreateAndConjunctionExpression(&gorules.TrueExpression)
-	assert.True(t, isConjunctionExpression(tests))
-}
+// func TestAndIsConjunctionExpression(t *testing.T) {
+// 	tests := CreateAndConjunctionExpression(&gorules.TrueExpression)
+// 	assert.True(t, isConjunctionExpression(tests))
+// }
 
-func TestOrIsConjunctionExpression(t *testing.T) {
-	tests := CreateOrConjunctionExpression(&gorules.FalseExpression)
-	assert.True(t, isConjunctionExpression(tests))
-}
+// func TestOrIsConjunctionExpression(t *testing.T) {
+// 	tests := CreateOrConjunctionExpression(&gorules.FalseExpression)
+// 	assert.True(t, isConjunctionExpression(tests))
+// }
 
-func TestIsConjunctionExpressionFail(t *testing.T) {
-	tests := CreateValueExpressionWithTarget("IsEqualTo", "test", "USA", "USA")
-	assert.False(t, isConjunctionExpression(tests))
-}
+// func TestIsConjunctionExpressionFail(t *testing.T) {
+// 	tests := CreateValueExpressionWithTarget("IsEqualTo", "test", "USA", "USA")
+// 	assert.False(t, isConjunctionExpression(tests))
+// }

@@ -265,3 +265,12 @@ func splitString(delimiter string) func(string) []string {
 }
 
 var spiltWithSpace = splitString(" ")
+
+var spiltWithDot = splitString(".")
+
+func getArrayPathAndKey(path string) (string, string) {
+	s := spiltWithDot(path)
+	lengt := len(s)
+	final := s[lengt-1]
+	return strings.Join(s[0:lengt-1], "."), final
+}

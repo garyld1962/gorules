@@ -44,3 +44,14 @@ func identityBool(conjuntion Conjunction) Expression {
 func ConjunctionExprProperties(conjunction Conjunction) (ConjunctionFunc, Expression) {
 	return conjunctionFunction(conjunction), identityBool(conjunction)
 }
+
+type SelectorFunc func(*RuleStatement, interface{}) Expression
+
+var selectorFuncList map[Selector]SelectorFunc = map[Selector]SelectorFunc{
+	This: CreateValueExpressionFromRuleStatement,
+	Any:  CreateConjuntionExprFromCollectionStatement,
+}
+
+func selectorFunctions(selector Selector) SelectorFunc {
+	return selectorFuncList[selector]
+}

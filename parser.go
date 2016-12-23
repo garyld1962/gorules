@@ -96,22 +96,22 @@ func EvaluateExpressions(accum Expression, expressions []*Expression) bool {
 }
 
 //GetKeyFromJSON get the value for key in JSON
-func GetKeyFromJSON(obj objects.Map, key string) string {
-	value := obj.Get(key)
-	//fmt.Println(key,value)
-	switch x := value.(type) {
-	case map[string]interface{}:
-		return "JSONObject"
-	case []interface{}:
-		return "JSONArray"
-	case string:
-		return x
-	case int:
-		return fmt.Sprintf("%d", x)
-	default:
-		return "default"
-	}
-}
+// func GetKeyFromJSON(obj objects.Map, key string) string {
+// 	value := obj.Get(key)
+// 	//fmt.Println(key,value)
+// 	switch x := value.(type) {
+// 	case map[string]interface{}:
+// 		return "JSONObject"
+// 	case []interface{}:
+// 		return "JSONArray"
+// 	case string:
+// 		return x
+// 	case int:
+// 		return fmt.Sprintf("%d", x)
+// 	default:
+// 		return "default"
+// 	}
+// }
 
 // type Accum struct {
 // 	Rules    *Rule          `json:"rules"`
