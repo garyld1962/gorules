@@ -43,3 +43,25 @@ func IsSelector(value string) bool {
 	}
 	return false
 }
+
+type SelectorFunc func(*RuleStatement, interface{}) Expression
+
+var selectorFuncList map[Selector]SelectorFunc = map[Selector]SelectorFunc{
+	This: CreateValueExpressionFromRuleStatement,
+	Any:  CreateConjuntionExprFromCollectionStatement,
+	All:  CreateConjuntionExprFromCollectionStatement,
+}
+
+var selectorConjExprList map[Selector]*ConjunctionExpression = map[Selector]*ConjunctionExpression{
+	This: CreateOrConjunctionExpression(&FalseExpression).(*ConjunctionExpression),
+	Any:  CreateOrConjunctionExpression(&FalseExpression).(*ConjunctionExpression),
+	All:  CreateAndConjunctionExpression(&TrueExpression).(*ConjunctionExpression),
+}
+
+func selectorFunctions(selector Selector) SelectorFunc {
+	return selectorFuncList[selector]
+}
+
+func selectorConjExprMap(selector Selector) *ConjunctionExpression {
+	return selectorConjExprList[selector]
+}

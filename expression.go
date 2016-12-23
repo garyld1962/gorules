@@ -66,23 +66,24 @@ func CreateConjunctionExpression(conjunction Conjunction) func(*Expression) Expr
 }
 
 func CreateConjuntionExprFromCollectionStatement(ruleStatement *RuleStatement, data interface{}) Expression {
-	selector, _ := ToSelector(ruleStatement.Selector)
-	dataAsObjectMap := data.(objects.Map)
-	var exp *ConjunctionExpression
-	if selector == Any {
+	selector, err := ToSelector(ruleStatement.Selector)
 
-		exp = CreateOrConjunctionExpression(&FalseExpression).(*ConjunctionExpression)
-		arrayPath, key := getArrayPathAndKey(ruleStatement.Path)
-		arrayValue := selectValue(dataAsObjectMap, arrayPath).([]interface{})
-
-		for _, x := range arrayValue {
-			valExp := CreateValueExpressionWithTarget(ruleStatement.Operator, selectValue(x.(map[string]interface{}), key).(string), ruleStatement.Target)
-			exp.Add(&valExp)
-		}
-
+	if err != nil {
+		panic(err)
 	}
 
-	return exp
+	dataAsObjectMap := data.(objects.Map)
+	conjExpr := selectorConjExprMap(selector)
+	arrayPath, key := getArrayPathAndKey(ruleStatement.Path)
+	arrayValue := selectValue(dataAsObjectMap, arrayPath).([]interface{})
+
+	for _, x := range arrayValue {
+		valueToCompare := selectValue(x.(map[string]interface{}), key).(string)
+		valExp := CreateValueExpressionWithTarget(ruleStatement.Operator, valueToCompare, ruleStatement.Target)
+		conjExpr.Add(&valExp)
+	}
+
+	return conjExpr
 }
 
 var CreateAndConjunctionExpression func(*Expression) Expression = CreateConjunctionExpression(And)

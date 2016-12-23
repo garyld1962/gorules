@@ -2,7 +2,6 @@ package gorules
 
 import (
 	"fmt"
-	"strings"
 
 	objects "github.com/stretchr/stew/objects"
 )
@@ -14,27 +13,6 @@ func EvaluateDSL(dslText string, data string) bool {
 	ruleToEvaluate := ParseString(dslText, data)
 	result := EvaluateExpressions(CreateOrConjunctionExpression(&FalseExpression), ruleToEvaluate.expressions)
 	return result
-}
-
-// ParseDSL parses simple DSL to Rule (array of Expressions)
-// Will be deleted once all opeartors are tested with
-func ParseDSL(dslText string, data string) *Rule {
-	lst := strings.Split(dslText, dslSeperator)
-	m, _ := objects.NewMapFromJSON(data)
-	var rle = &Rule{}
-	var exp Expressionable
-	for _, x := range lst {
-		if IsConjunction(x) {
-			exp = CreateConjunctionStatement(x)
-		} else {
-			exp = CreateRuleStatement(strings.TrimSpace(x))
-		}
-		parsed, _ := exp.Parse(m)
-		rle.Add(&parsed)
-	}
-	boo := EvaluateExpressions(CreateOrConjunctionExpression(&FalseExpression), rle.expressions)
-	fmt.Println("Output", boo)
-	return rle
 }
 
 //ParseString parses the DSL with space and creates Rule
