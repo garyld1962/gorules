@@ -11,7 +11,7 @@ type Expressionable interface {
 	Parse(interface{}) (Expression, error)
 }
 
-// RuleStatement holds a Expression with a Operator which can be parsed and evalueted
+// RuleStatement holds a Expression with a Operator which can be parsed and evaluated
 type RuleStatement struct {
 	Branch   string `json:"branch"`
 	Selector string `json:"selector"`
@@ -22,9 +22,8 @@ type RuleStatement struct {
 
 // Parse makes the RuleStatement Expressionable
 func (s *RuleStatement) Parse(data interface{}) (Expression, error) {
-	dat := data.(objects.Map)
-	test := CreateValueExpressionWithTarget(s.Operator, "", GetKeyFromJSON(dat, s.Key), s.Target)
-	return test, nil
+	dataAsObjectMap := data.(objects.Map)
+	return CreateValueExpressionWithTarget(s.Operator, "", GetKeyFromJSON(dataAsObjectMap, s.Key), s.Target), nil
 }
 
 // CreateRuleStatement creates a RuleStatement with defaults
@@ -38,9 +37,28 @@ func CreateRuleStatement(input string) *RuleStatement {
 	return rule
 }
 
+// CreateRuleStatement creates a RuleStatement with defaults
+func CreateRuleStatementFromExisting(existingRule Expressionable, input string) *RuleStatement {
+	parsed := StrSlice(reverse(strings.Split(input, " ")))
+	var rule *RuleStatement
+	if existingRule != nil {
+		existingRulevalue := existingRule.(*RuleStatement)
+		rule = &RuleStatement{Target: parsed.GetOrEmpty(0),
+			Operator: parsed.GetOrDefault(1, existingRulevalue.Operator),
+			Key:      parsed.GetOrDefault(2, existingRulevalue.Key),
+			Selector: parsed.GetOrDefault(3, existingRulevalue.Selector),
+			Branch:   parsed.GetOrDefault(4, existingRulevalue.Branch)}
+
+	} else {
+		rule = CreateRuleStatement(input)
+	}
+	// fmt.Println("Addres", &rule)
+	return rule
+}
+
 // ConjunctionStatement combines two RuleStatements
 type ConjunctionStatement struct {
-	Conjunction Conjunction `json:"type"`
+	Conjunction Conjunction `json:"conjunction"`
 }
 
 // Parse makes the ConjunctionStatement Expressionable
@@ -49,7 +67,7 @@ func (c *ConjunctionStatement) Parse(_ interface{}) (Expression, error) {
 	case And:
 		return CreateAndConjunctionExpression(&TrueExpression), nil
 	case Or:
-		return CreateAndConjunctionExpression(&FalseExpression), nil
+		return CreateOrConjunctionExpression(&FalseExpression), nil
 	default:
 		return CreateAndConjunctionExpression(&TrueExpression), nil
 	}
@@ -62,6 +80,11 @@ func CreateConjunctionStatement(input string) *ConjunctionStatement {
 		panic(err)
 	}
 	return &ConjunctionStatement{Conjunction: conjunction}
+}
+
+type CollectionStatement struct {
+	Type string        `json:"type"`
+	Rule RuleStatement `json:"rule"`
 }
 
 type StrSlice []string

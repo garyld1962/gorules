@@ -18,19 +18,8 @@ type Rule struct {
 }
 
 func (r Rule) Evalute() (bool, error) {
-	/*
-		  for _, e := range r.expressions {
-
-					var isTrue, err = e.evalute()
-					if err != nil {
-						return false, err
-					}
-					if !isTrue {
-						return false, nil
-					}
-
-			}*/
-	return true, nil
+	result := EvaluateExpressions(CreateOrConjunctionExpression(&FalseExpression), r.expressions)
+	return result, nil
 }
 
 func (r *Rule) Add(expression *Expression) {

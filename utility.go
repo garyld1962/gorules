@@ -1,6 +1,7 @@
 package gorules
 
 import (
+	"bytes"
 	"errors"
 	"reflect"
 	"regexp"
@@ -243,3 +244,24 @@ func reverse(value []string) []string {
 func isEven(value int) bool {
 	return value%2 == 0
 }
+
+func concatStrings(strgs ...string) string {
+	var buffer bytes.Buffer
+	for _, strg := range strgs {
+		buffer.WriteString(strg)
+	}
+	return buffer.String()
+}
+
+func trim(input string) string {
+	return strings.TrimSpace(input)
+}
+
+func splitString(delimiter string) func(string) []string {
+
+	return func(input string) []string {
+		return strings.Split(input, delimiter)
+	}
+}
+
+var spiltWithSpace = splitString(" ")

@@ -1,9 +1,5 @@
 package gorules
 
-import (
-	"fmt"
-)
-
 type Expression interface {
 	Evaluate() (bool, error)
 }
@@ -50,7 +46,6 @@ func (v ConjunctionExpression) Evaluate() (bool, error) {
 
 	for _, e := range v.Expressions {
 		var resultBool, _ = evaluator(accumlator, (*e))
-		fmt.Println("eval", resultBool, (*e))
 		accumlator = CreateBoolExpression(resultBool)
 	}
 	return accumlator.Evaluate()

@@ -1,12 +1,12 @@
 package gorules_test
 
 import (
-	"fmt"
 	"gorules"
 	"testing"
 
+	"fmt"
+
 	"github.com/stretchr/testify/assert"
-	//"fmt"
 )
 
 var parserTestData = `{
@@ -42,15 +42,17 @@ var parserTestData = `{
 
 //IF THIS country NOTEQUALS USA |AND| NOTEQUALS CANADA |AND| zip3 EQUALS "333"
 func TestValue(t *testing.T) {
-	m := gorules.ParseDSL("IF THIS country IsEqualTo USA |AND| IF THIS country IsEqualTo USA |AND| IF THIS state IsEqualTo FL |AND| IF THIS subtotal IsEqualTo 25.00", parserTestData)
-	assert.NotNil(t, m)
+	//	m := gorules.ParseDSL("country IsEqualTo USA |AND| country IsEqualTo USA |AND| state IsEqualTo FL |AND| IF THIS subtotal IsEqualTo 25.0", parserTestData)
+	result := gorules.EvaluateDSL("country IsEqualTo CANADA AND country IsEqualTo INDIA AND country IsEqualTo USA", parserTestData)
+	fmt.Println(result)
+	assert.NotNil(t, result)
 }
 
-func TestReduceRuleToBool(t *testing.T) {
-	var rle = &gorules.Rule{}
-	exp := gorules.CreateConjunctionStatement("AND")
-	parsed, _ := exp.Parse(exp)
-	fmt.Println("pared", exp)
-	rle.Add(&parsed)
-	assert.NotNil(t, nil)
-}
+// func TestReduceRuleToBool(t *testing.T) {
+// 	var rle = &gorules.Rule{}
+// 	exp := gorules.CreateConjunctionStatement("AND")
+// 	parsed, _ := exp.Parse(exp)
+// 	fmt.Println("pared", exp)
+// 	rle.Add(&parsed)
+// 	assert.NotNil(t, nil)
+// }
