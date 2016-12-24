@@ -1,97 +1,99 @@
 package gorules
 
-import "github.com/stretchr/stew/objects"
-
+// Expression refers to anytype that can be evaluated
 type Expression interface {
 	Evaluate() (bool, error)
 }
 
+// ValueExpression stores the value and target be Operated on.Can act with different operates
 type ValueExpression struct {
 	Operator Operator `json:"operator"`
 	Value    string   `json:"value"`
 	Target   string   `json:"target"`
 }
 
-// Evaluate ...
+// Evaluate used to eval an expression to a bool
 func (v ValueExpression) Evaluate() (bool, error) {
-	operatorFunc := OperatorFuncList[v.Operator]
+	operatorFunc := operatorFuncList[v.Operator]
 	result, err := operatorFunc(v.Value, v.Target)
 	return result, err
 }
 
-func CreateValueExpression(operatorText string, value string) Expression {
-	operator, err := ToOperator(operatorText)
+func createValueExpression(operatorText string, value string) Expression {
+	operator, err := toOperator(operatorText)
 	if err == nil {
 		return &ValueExpression{Operator: operator, Value: value}
 	}
 	panic(err)
 }
 
-func CreateValueExpressionWithTarget(operatorText string, value string, target string) Expression {
-	operator, err := ToOperator(operatorText)
+func createValueExpressionWithTarget(operatorText string, value string, target string) Expression {
+	operator, err := toOperator(operatorText)
 	if err == nil {
 		return &ValueExpression{Operator: operator, Value: value, Target: target}
 	}
 	panic(err)
 }
 
-func CreateValueExpressionFromRuleStatement(rule *RuleStatement, data interface{}) Expression {
-	dataAsObjectMap := data.(objects.Map)
-	return CreateValueExpressionWithTarget(rule.Operator, selectValue(dataAsObjectMap, rule.Path).(string), rule.Target)
+func createValueExpressionFromRuleStatement(rule *RuleStatement, data map[string]interface{}) Expression {
+	return createValueExpressionWithTarget(rule.Operator, selectValue(data, rule.Path).(string), rule.Target)
 }
 
+// ConjunctionExpression used to combine any type of Expressions
 type ConjunctionExpression struct {
 	Conjunction Conjunction   `json:"conjunction"`
 	Expressions []*Expression `json:"expressions"`
 }
 
-// Evaluate ...
-func (v ConjunctionExpression) Evaluate() (bool, error) {
+// Evaluate used to get the combined evaluated value of all the expressions using the Conjunction
+func (c ConjunctionExpression) Evaluate() (bool, error) {
 
-	evaluator, accumlator := ConjunctionExprProperties(v.Conjunction)
+	evaluator, accumlator := conjunctionExprProperties(c.Conjunction)
 
-	for _, e := range v.Expressions {
+	for _, e := range c.Expressions {
 		var resultBool, _ = evaluator(accumlator, (*e))
-		accumlator = CreateBoolExpression(resultBool)
+		accumlator = createBoolExpression(resultBool)
 	}
 	return accumlator.Evaluate()
 }
 
-func CreateConjunctionExpression(conjunction Conjunction) func(*Expression) Expression {
+// Add the expression to be evaluated into the conjunction espression list
+func (c *ConjunctionExpression) Add(expr *Expression) {
+	c.Expressions = append(c.Expressions, expr)
+}
+
+var createAndConjunctionExpression = createConjunctionExpression(And)
+
+var createOrConjunctionExpression = createConjunctionExpression(Or)
+
+func createConjunctionExpression(conjunction Conjunction) func(*Expression) Expression {
 	return func(expr *Expression) Expression {
 		conj := &ConjunctionExpression{Conjunction: conjunction}
 		conj.Add(expr)
+		// fmt.Println((*expr).Evaluate())
+		// fmt.Println("2", conjunction)
 		return conj
 	}
 }
 
-func CreateConjuntionExprFromCollectionStatement(ruleStatement *RuleStatement, data interface{}) Expression {
-	selector, err := ToSelector(ruleStatement.Selector)
+func createConjuntionExprFromCollectionStatement(ruleStatement *RuleStatement, data map[string]interface{}) Expression {
+	selector, err := toSelector(ruleStatement.Selector)
 
 	if err != nil {
 		panic(err)
 	}
 
-	dataAsObjectMap := data.(objects.Map)
 	conjExpr := selectorConjExprMap(selector)
 	arrayPath, key := getArrayPathAndKey(ruleStatement.Path)
-	arrayValue := selectValue(dataAsObjectMap, arrayPath).([]interface{})
+	arrayValue := selectValue(data, arrayPath).([]interface{})
 
 	for _, x := range arrayValue {
 		valueToCompare := selectValue(x.(map[string]interface{}), key).(string)
-		valExp := CreateValueExpressionWithTarget(ruleStatement.Operator, valueToCompare, ruleStatement.Target)
+		valExp := createValueExpressionWithTarget(ruleStatement.Operator, valueToCompare, ruleStatement.Target)
+		//fmt.Println("1", valExp)
 		conjExpr.Add(&valExp)
 	}
-
 	return conjExpr
-}
-
-var CreateAndConjunctionExpression func(*Expression) Expression = CreateConjunctionExpression(And)
-
-var CreateOrConjunctionExpression func(*Expression) Expression = CreateConjunctionExpression(Or)
-
-func (conj *ConjunctionExpression) Add(expr *Expression) {
-	conj.Expressions = append(conj.Expressions, expr)
 }
 
 func isConjunctionExpression(expr Expression) bool {
@@ -110,8 +112,8 @@ func (v BoolValueExpression) Evaluate() (bool, error) {
 	return false, nil
 }
 
-// CreateBoolExpression creates a BoolValueExpression with a bool
-func CreateBoolExpression(boolType bool) Expression {
+// createBoolExpression creates a BoolValueExpression with a bool
+func createBoolExpression(boolType bool) Expression {
 	if boolType {
 		return BoolValueExpression(true)
 	}
@@ -119,9 +121,9 @@ func CreateBoolExpression(boolType bool) Expression {
 }
 
 // TrueExpression always evaluates to True
-var TrueExpression = CreateBoolExpression(true)
+var TrueExpression = createBoolExpression(true)
 
 // FalseExpression always evaluates to False
-var FalseExpression = CreateBoolExpression(false)
+var FalseExpression = createBoolExpression(false)
 
 //-------------------------------------

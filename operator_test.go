@@ -1,7 +1,6 @@
-package gorules_test
+package gorules
 
 import (
-	"gorules"
 	"testing"
 
 	"fmt"
@@ -10,29 +9,23 @@ import (
 )
 
 func TestToOperator(t *testing.T) {
-	operator, _ := gorules.ToOperator("IsEqualTo")
-	assert.Equal(t, operator, gorules.IsEqualTo)
+	operator, _ := toOperator("IsEqualTo")
+	assert.Equal(t, operator, IsEqualTo)
 }
 
 func TestToOperatorInValid(t *testing.T) {
-	_, err := gorules.ToOperator("IsEqualToS")
+	_, err := toOperator("IsEqualToS")
 	assert.NotEqual(t, err, nil)
 }
 
 func TestOperatorAsString(t *testing.T) {
-	operator, _ := gorules.ToOperator("IsEqualTo")
+	operator, _ := toOperator("IsEqualTo")
 	txt := fmt.Sprintf("%s", operator)
 	assert.Equal(t, txt, "IsEqualTo")
 }
 
 func TestIsOperator(t *testing.T) {
-	isOperator := gorules.IsOperator("IsEqualTo")
-	assert.True(t, isOperator)
+	isO := isOperator("IsEqualTo")
+	assert.True(t, isO)
 
 }
-
-// func TestIsOperatorFail(t *testing.T) {
-// 	isOperator := gorules.IsOperator("IsEqualTos")
-// 	assert.False(t, isOperator)
-
-// }

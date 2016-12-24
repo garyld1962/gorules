@@ -1,16 +1,12 @@
-package gorules_test
+package gorules
 
 import (
-	"gorules"
 	"testing"
-
-	"fmt"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateConjunctionStatement(t *testing.T) {
-	conjunction := gorules.CreateConjunctionStatement("AND")
-	fmt.Println(conjunction)
-	assert.Equal(t, conjunction, gorules.And)
+	conjunction := createConjunctionStatement("AND")
+	assert.Equal(t, (*conjunction).Conjunction, And)
 }

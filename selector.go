@@ -18,8 +18,8 @@ var selectorNames = [...]string{
 	All:  "ALL",
 }
 
-// ToSelector converts string to Selector
-func ToSelector(s string) (Selector, error) {
+// toSelector converts string to Selector
+func toSelector(s string) (Selector, error) {
 	for i, r := range selectorNames {
 		if s == r {
 			return Selector(i), nil
@@ -35,30 +35,30 @@ func (v Selector) String() string {
 	return selectorNames[v]
 }
 
-// IsSelector checks if the string is a valid Selector
-func IsSelector(value string) bool {
-	_, err := ToSelector(value)
+// isSelector checks if the string is a valid Selector
+func isSelector(value string) bool {
+	_, err := toSelector(value)
 	if err == nil {
 		return true
 	}
 	return false
 }
 
-type SelectorFunc func(*RuleStatement, interface{}) Expression
+type selectorFunc func(*RuleStatement, map[string]interface{}) Expression
 
-var selectorFuncList map[Selector]SelectorFunc = map[Selector]SelectorFunc{
-	This: CreateValueExpressionFromRuleStatement,
-	Any:  CreateConjuntionExprFromCollectionStatement,
-	All:  CreateConjuntionExprFromCollectionStatement,
+var selectorFuncList = map[Selector]selectorFunc{
+	This: createValueExpressionFromRuleStatement,
+	Any:  createConjuntionExprFromCollectionStatement,
+	All:  createConjuntionExprFromCollectionStatement,
 }
 
-var selectorConjExprList map[Selector]*ConjunctionExpression = map[Selector]*ConjunctionExpression{
-	This: CreateOrConjunctionExpression(&FalseExpression).(*ConjunctionExpression),
-	Any:  CreateOrConjunctionExpression(&FalseExpression).(*ConjunctionExpression),
-	All:  CreateAndConjunctionExpression(&TrueExpression).(*ConjunctionExpression),
+var selectorConjExprList = map[Selector]*ConjunctionExpression{
+	This: createOrConjunctionExpression(&FalseExpression).(*ConjunctionExpression),
+	Any:  createOrConjunctionExpression(&FalseExpression).(*ConjunctionExpression),
+	All:  createAndConjunctionExpression(&TrueExpression).(*ConjunctionExpression),
 }
 
-func selectorFunctions(selector Selector) SelectorFunc {
+func selectorFunctions(selector Selector) selectorFunc {
 	return selectorFuncList[selector]
 }
 

@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/stretchr/stew/objects"
 )
 
 func in(v, t string) bool {
@@ -273,4 +275,12 @@ func getArrayPathAndKey(path string) (string, string) {
 	lengt := len(s)
 	final := s[lengt-1]
 	return strings.Join(s[0:lengt-1], "."), final
+}
+
+func parseStringToJSONObject(jsonAsString string) map[string]interface{} {
+	result, err := objects.NewMapFromJSON(jsonAsString)
+	if err != nil {
+		panic(err)
+	}
+	return result
 }

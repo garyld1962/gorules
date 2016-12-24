@@ -27,15 +27,15 @@ var operatorNames = [...]string{
 	IsGreaterThan: "IsGreaterThan",
 }
 
-func (v Operator) String() string {
-	if v >= maxOperatorFlag {
+func (o Operator) String() string {
+	if o >= maxOperatorFlag {
 		return "Invalid Operator"
 	}
-	return operatorNames[v]
+	return operatorNames[o]
 }
 
-// ToOperator converts string to one of the operatorNames in const declaration
-func ToOperator(s string) (Operator, error) {
+// toOperator converts string to one of the operatorNames in const declaration
+func toOperator(s string) (Operator, error) {
 	for i, r := range operatorNames {
 		if s == r {
 			return Operator(i), nil
@@ -44,11 +44,17 @@ func ToOperator(s string) (Operator, error) {
 	return maxOperatorFlag, fmt.Errorf("Invalid Operator value %q", s)
 }
 
-// IsOperator check if a string is a Operator Names
-func IsOperator(value string) bool {
-	_, err := ToOperator(value)
+// isOperator check if a string is a Operator Names
+func isOperator(value string) bool {
+	_, err := toOperator(value)
 	if err == nil {
 		return true
 	}
 	return false
+}
+
+type operatorFunc func(string, string) (bool, error)
+
+var operatorFuncList map[Operator]operatorFunc = map[Operator]operatorFunc{
+	IsEqualTo: equals,
 }
