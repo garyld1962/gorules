@@ -2,12 +2,15 @@ package gorules
 
 import "fmt"
 
-// Selector type
+// Selector defines whether the JSON key is a value or an array
 type Selector int
 
 const (
+	// This refers to the value of the key placed after this
 	This Selector = iota
+	// Any lets the key given treated as a array and figures out how to operate
 	Any
+	// All lets the key given treated as a array and figures out how to operate
 	All
 	maxSelectorFlag
 )
@@ -28,6 +31,7 @@ func toSelector(s string) (Selector, error) {
 	return maxSelectorFlag, fmt.Errorf("Invalid Selector value %q", s)
 }
 
+// String makes Operator implement Stringer
 func (v Selector) String() string {
 	if v >= maxSelectorFlag {
 		return "Invalid Selector"

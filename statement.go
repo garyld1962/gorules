@@ -61,7 +61,7 @@ type ConjunctionStatement struct {
 	Conjunction Conjunction `json:"conjunction"`
 }
 
-// Parse makes the ConjunctionStatement Expressionable
+// ToExpression makes the ConjunctionStatement Expressionable
 func (c *ConjunctionStatement) ToExpression(_ interface{}) (Expression, error) {
 	switch c.Conjunction {
 	case And:

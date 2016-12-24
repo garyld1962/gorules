@@ -6,7 +6,9 @@ import "fmt"
 type Conjunction int
 
 const (
+	// And used && to evaluate the Expressions provided
 	And Conjunction = iota
+	// Or uses || to evaluate the expressions provided
 	Or
 	maxConjunctionFlag
 )
@@ -16,6 +18,7 @@ var conjunctionNames = [...]string{
 	Or:  "OR",
 }
 
+// String makes Conjunction implement Stringer interface
 func (c Conjunction) String() string {
 	if c >= maxConjunctionFlag {
 		return "Invalid Conjunction"
@@ -43,26 +46,26 @@ func isConjunction(value string) bool {
 
 type conjunctionFunc func(Expression, Expression) (bool, error)
 
-var conjunctionFuncList map[Conjunction]conjunctionFunc = map[Conjunction]conjunctionFunc{
+var conjunctionFuncList = map[Conjunction]conjunctionFunc{
 	And: andEvaluator,
 	Or:  orEvaluator,
 }
 
-var IdentityBoolForConjunction map[Conjunction]Expression = map[Conjunction]Expression{
+var identityBoolForConjunction = map[Conjunction]Expression{
 	And: TrueExpression,
 	Or:  FalseExpression,
 }
 
-func andEvaluator(expr_one Expression, expr_two Expression) (bool, error) {
-	isOneTrue, _ := expr_one.Evaluate()
-	isTwoTrue, _ := expr_two.Evaluate()
+func andEvaluator(exprOne Expression, exprTwo Expression) (bool, error) {
+	isOneTrue, _ := exprOne.Evaluate()
+	isTwoTrue, _ := exprTwo.Evaluate()
 
 	return isOneTrue && isTwoTrue, nil
 }
 
-func orEvaluator(expr_one Expression, expr_two Expression) (bool, error) {
-	isOneTrue, _ := expr_one.Evaluate()
-	isTwoTrue, _ := expr_two.Evaluate()
+func orEvaluator(exprOne Expression, exprTwo Expression) (bool, error) {
+	isOneTrue, _ := exprOne.Evaluate()
+	isTwoTrue, _ := exprTwo.Evaluate()
 
 	return isOneTrue || isTwoTrue, nil
 }
@@ -72,7 +75,7 @@ func conjunctionFunction(conjunction Conjunction) conjunctionFunc {
 }
 
 func identityBool(conjuntion Conjunction) Expression {
-	return IdentityBoolForConjunction[conjuntion]
+	return identityBoolForConjunction[conjuntion]
 }
 
 // conjunctionExprProperties returns the conjuntion function used for evaluation and the seed value

@@ -6,7 +6,9 @@ import "fmt"
 type Operator int
 
 const (
+	// IsEqualTo compares values for equals
 	IsEqualTo Operator = iota
+	// IsGreaterThan compares values for greater than value
 	IsGreaterThan
 	maxOperatorFlag
 	// IsNotEqualTo
@@ -55,6 +57,6 @@ func isOperator(value string) bool {
 
 type operatorFunc func(string, string) (bool, error)
 
-var operatorFuncList map[Operator]operatorFunc = map[Operator]operatorFunc{
+var operatorFuncList = map[Operator]operatorFunc{
 	IsEqualTo: equals,
 }
