@@ -29,6 +29,7 @@ var operatorNames = [...]string{
 	IsGreaterThan: "IsGreaterThan",
 }
 
+// String makes Operator implement Stringer
 func (o Operator) String() string {
 	if o >= maxOperatorFlag {
 		return "Invalid Operator"
