@@ -4,8 +4,6 @@ import (
 	"gorules"
 	"testing"
 
-	"fmt"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -59,16 +57,6 @@ var parserTestData = `{
 // }
 
 func TestCollectionalue(t *testing.T) {
-	result := gorules.EvaluateDSL("ANY orderItems.weight IsEqualTo 10", parserTestData)
-	fmt.Println(result)
-	assert.NotNil(t, result)
+	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo 10", parserTestData)
+	assert.True(t, result)
 }
-
-// func TestReduceRuleToBool(t *testing.T) {
-// 	var rle = &gorules.Rule{}
-// 	exp := gorules.CreateConjunctionStatement("AND")
-// 	parsed, _ := exp.Parse(exp)
-// 	fmt.Println("pared", exp)
-// 	rle.Add(&parsed)
-// 	assert.NotNil(t, nil)
-// }

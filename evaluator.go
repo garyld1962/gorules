@@ -1,80 +1,15 @@
 package gorules
 
-// Evaluator ...
-type Evaluator interface {
-	Evaluate(ex Expression) (bool, error)
+import "fmt"
+
+func evaluator(parser ruleParserFunc) func(string, string) bool {
+
+	return func(dslText string, data string) bool {
+		result, _ := parser(dslText, parseStringToJSONObject(data)).Evaluate()
+		fmt.Println("result", result)
+		return result
+	}
 }
 
-// ValueExpressionEvaluator ...
-type ValueExpressionEvaluator struct {
-}
-
-// Evaluate ...
-func (ve ValueExpressionEvaluator) Evaluate(ex Expression) (bool, error) {
-
-	// e := ex.(ValueExpression)
-	// fmt.Println(e.Operator)
-	// switch e.Operator {
-	// case "IsEqualTo":
-	// 	return equals(e.Value, e.Target)
-
-	// // case "IsNotEqualTo":
-	// // 	return !equals(e.Value, e.Target), nil
-
-	// case "IsGreater":
-	// 	r, err := isGreater(e.Value, e.Target)
-	// 	if err != nil {
-	// 		return false, err
-	// 	}
-	// 	return r, nil
-	// case "IsGreaterThanOrEquals":
-
-	// 	r, err := isGreaterOrEqual(e.Target, e.Value)
-	// 	if err != nil {
-	// 		return false, err
-	// 	}
-	// 	return r, nil
-	// case "IsLessThanOrEquals":
-
-	// 	r, err := isLessOrEqual(e.Target, e.Value)
-	// 	if err != nil {
-	// 		return false, err
-	// 	}
-	// 	return r, nil
-
-	// case "IsLessThan":
-	// 	r, err := isGreater(e.Value, e.Target)
-	// 	if err != nil {
-	// 		return false, err
-	// 	}
-	// 	return !r, nil
-
-	// case "IsNull":
-
-	// 	return isNull(e.Value, e.Target)
-
-	// case "IsNotNull":
-	// 	return isNotNull(e.Value, e.Target)
-	// case "IsFalse":
-	// 	return isFalse(e.Value, e.Target)
-	// case "IsTrue":
-	// 	return isTrue(e.Value, e.Target)
-	// case "StartsWith":
-	// 	return startsWith(e.Value, e.Target)
-	// case "EndsWith":
-	// 	return endsWith(e.Value, e.Target)
-	// case "Contains":
-	// 	return contains(e.Value, e.Target)
-
-	// case "In":
-	// 	r := in(e.Value, e.Target)
-	// 	return r, nil
-	// case "NotIn":
-	// 	r := !in(e.Value, e.Target)
-	// 	return r, nil
-
-	// default:
-	// }
-	return true, nil
-	// panic("undefined Operator " + e.Operator)
-}
+// DSLEvaluator evaluates DSL to a bool with function ParseDSL
+var DSLEvaluator = evaluator(ParseDSL)
