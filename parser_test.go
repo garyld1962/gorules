@@ -57,6 +57,6 @@ var parserTestData = `{
 // }
 
 func TestCollectionalue(t *testing.T) {
-	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo 10", parserTestData)
+	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo 11", parserTestData)
 	assert.True(t, result)
 }

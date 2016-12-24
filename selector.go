@@ -51,21 +51,21 @@ func isSelector(value string) bool {
 type selectorFunc func(*RuleStatement, map[string]interface{}) Expression
 
 var selectorFuncList = map[Selector]selectorFunc{
-	This: createValueExpressionFromRuleStatement,
-	Any:  createConjuntionExprFromCollectionStatement,
-	All:  createConjuntionExprFromCollectionStatement,
+	This: createValueExpressionFromRuleStmt,
+	Any:  createConjuntionExprFromCollectionStmt,
+	All:  createConjuntionExprFromCollectionStmt,
 }
 
-var selectorConjExprList = map[Selector]*ConjunctionExpression{
-	This: createOrConjunctionExpression(&FalseExpression).(*ConjunctionExpression),
-	Any:  createOrConjunctionExpression(&FalseExpression).(*ConjunctionExpression),
-	All:  createAndConjunctionExpression(&TrueExpression).(*ConjunctionExpression),
+var selectorConjExprList = map[Selector]ConjunctionExpression{
+	This: createOrConjunctionExpression(&FalseExpression).(ConjunctionExpression),
+	Any:  createOrConjunctionExpression(&FalseExpression).(ConjunctionExpression),
+	All:  createAndConjunctionExpression(&TrueExpression).(ConjunctionExpression),
 }
 
 func selectorFunctions(selector Selector) selectorFunc {
 	return selectorFuncList[selector]
 }
 
-func selectorConjExprMap(selector Selector) *ConjunctionExpression {
+func selectorConjExprMap(selector Selector) ConjunctionExpression {
 	return selectorConjExprList[selector]
 }

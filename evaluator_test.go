@@ -1,13 +1,13 @@
 package gorules_test
 
-//var eval = gorules.ValueExpressionEvaluator{}
-
 import (
 	"gorules"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+//var eval = gorules.ValueExpressionEvaluator{}
 
 var evaluatorTestData = `{
   "id": 25,
@@ -34,7 +34,7 @@ var evaluatorTestData = `{
       "warehouse": "",
       "weight" : "11",
       "name": "test product 1",
-      "availableInventory": "",
+      "availableInventory": "D",
       "promos": []
     },{
       "id": 3,
@@ -50,10 +50,10 @@ var evaluatorTestData = `{
   "promos": []
 }`
 
-func TestSingleLineDSL(t *testing.T) {
-	result := gorules.DSLEvaluator("country IsEqualTo USA", evaluatorTestData)
-	assert.True(t, result)
-}
+// func TestSingleLineDSL(t *testing.T) {
+// 	result := gorules.DSLEvaluator("country IsEqualTo USA", evaluatorTestData)
+// 	assert.True(t, result)
+// }
 
 func TestAllSelectorPass(t *testing.T) {
 	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo 11", evaluatorTestData)

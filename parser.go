@@ -19,7 +19,7 @@ var ParseDSL = ruleParserFunc(parseStringAsDSL)
 func parseStringAsDSL(dslText string, jsonObj map[string]interface{}) *Rule {
 
 	var ruleToEvaluate = &Rule{}
-	var latestRuleStatement Expressionable
+	var latestRuleStmt Expressionable
 	var toParse string
 
 	words := spiltWithSpace(dslText)
@@ -28,18 +28,18 @@ func parseStringAsDSL(dslText string, jsonObj map[string]interface{}) *Rule {
 		if !isConjunction(word) {
 			toParse = concatStrings(toParse, word, " ")
 		} else {
-			latestRuleStatement = createRuleStatementFromExisting(latestRuleStatement, trim(toParse))
+			latestRuleStmt = createRuleStmtFromExisting(latestRuleStmt, trim(toParse))
 			toParse = ""
-			valueExpr, _ := latestRuleStatement.ToExpression(jsonObj)
-			conjExpr, _ := createConjunctionStatement(word).ToExpression(jsonObj)
+			valueExpr, _ := latestRuleStmt.ToExpression(jsonObj)
+			conjExpr, _ := createConjunctionStmt(word).ToExpression(jsonObj)
 			ruleToEvaluate.Add(&valueExpr)
 			ruleToEvaluate.Add(&conjExpr)
 		}
 
 	}
 
-	latestRuleStatement = createRuleStatementFromExisting(latestRuleStatement, trim(toParse))
-	lastRuleExpr, _ := latestRuleStatement.ToExpression(jsonObj)
+	latestRuleStmt = createRuleStmtFromExisting(latestRuleStmt, trim(toParse))
+	lastRuleExpr, _ := latestRuleStmt.ToExpression(jsonObj)
 	ruleToEvaluate.Add(&lastRuleExpr)
 	return ruleToEvaluate
 }

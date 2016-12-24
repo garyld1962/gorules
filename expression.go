@@ -16,6 +16,7 @@ type ValueExpression struct {
 func (v ValueExpression) Evaluate() (bool, error) {
 	operatorFunc := operatorFuncList[v.Operator]
 	result, err := operatorFunc(v.Value, v.Target)
+	// fmt.Println(v, result)
 	return result, err
 }
 
@@ -35,7 +36,7 @@ func createValueExpressionWithTarget(operatorText string, value string, target s
 	panic(err)
 }
 
-func createValueExpressionFromRuleStatement(rule *RuleStatement, data map[string]interface{}) Expression {
+func createValueExpressionFromRuleStmt(rule *RuleStatement, data map[string]interface{}) Expression {
 	return createValueExpressionWithTarget(rule.Operator, selectValue(data, rule.Path).(string), rule.Target)
 }
 
@@ -68,29 +69,27 @@ var createOrConjunctionExpression = createConjunctionExpression(Or)
 
 func createConjunctionExpression(conjunction Conjunction) func(*Expression) Expression {
 	return func(expr *Expression) Expression {
-		conj := &ConjunctionExpression{Conjunction: conjunction}
+		conj := ConjunctionExpression{Conjunction: conjunction}
 		conj.Add(expr)
-		// fmt.Println((*expr).Evaluate())
-		// fmt.Println("2", conjunction)
 		return conj
 	}
 }
 
-func createConjuntionExprFromCollectionStatement(ruleStatement *RuleStatement, data map[string]interface{}) Expression {
-	selector, err := toSelector(ruleStatement.Selector)
+func createConjuntionExprFromCollectionStmt(ruleStmt *RuleStatement, data map[string]interface{}) Expression {
+	selector, err := toSelector(ruleStmt.Selector)
 
 	if err != nil {
 		panic(err)
 	}
 
 	conjExpr := selectorConjExprMap(selector)
-	arrayPath, key := getArrayPathAndKey(ruleStatement.Path)
+	arrayPath, key := getArrayPathAndKey(ruleStmt.Path)
 	arrayValue := selectValue(data, arrayPath).([]interface{})
 
 	for _, x := range arrayValue {
 		valueToCompare := selectValue(x.(map[string]interface{}), key).(string)
-		valExp := createValueExpressionWithTarget(ruleStatement.Operator, valueToCompare, ruleStatement.Target)
-		//fmt.Println("1", valExp)
+		valExp := createValueExpressionWithTarget(ruleStmt.Operator, valueToCompare, ruleStmt.Target)
+
 		conjExpr.Add(&valExp)
 	}
 	return conjExpr

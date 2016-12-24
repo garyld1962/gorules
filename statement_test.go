@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateConjunctionStatement(t *testing.T) {
-	conjunction := createConjunctionStatement("AND")
+func TestCreateConjunctionStmt(t *testing.T) {
+	conjunction := createConjunctionStmt("AND")
 	assert.Equal(t, (*conjunction).Conjunction, And)
 }

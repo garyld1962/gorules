@@ -25,19 +25,19 @@ func (r *RuleStatement) ToExpression(data interface{}) (Expression, error) {
 	return nil, err
 }
 
-// createRuleStatement creates a RuleStatement with defaults
-func createRuleStatement(input string) *RuleStatement {
+// createRuleStmt creates a RuleStatement with defaults
+func createRuleStmt(input string) *RuleStatement {
 	parsed := stringSlice(reverse(spiltWithSpace(input)))
-	rule := &RuleStatement{Target: parsed.getOrEmpty(0),
+	ruleStmt := &RuleStatement{Target: parsed.getOrEmpty(0),
 		Operator: parsed.getOrEmpty(1),
 		Path:     parsed.getOrDefault(2, "data"),
 		Selector: parsed.getOrDefault(3, "THIS"),
 		Branch:   parsed.getOrDefault(4, "IF")}
-	return rule
+	return ruleStmt
 }
 
-// createRuleStatementFromExisting creates a RuleStatement with defaults
-func createRuleStatementFromExisting(existingRule Expressionable, input string) *RuleStatement {
+// createRuleStmtFromExisting creates a RuleStatement with defaults
+func createRuleStmtFromExisting(existingRule Expressionable, input string) *RuleStatement {
 	parsed := stringSlice(reverse(spiltWithSpace(input)))
 	var rule *RuleStatement
 	if existingRule != nil {
@@ -49,7 +49,7 @@ func createRuleStatementFromExisting(existingRule Expressionable, input string) 
 			Branch:   parsed.getOrDefault(4, existingRulevalue.Branch)}
 
 	} else {
-		rule = createRuleStatement(input)
+		rule = createRuleStmt(input)
 	}
 	return rule
 }
@@ -71,8 +71,8 @@ func (c *ConjunctionStatement) ToExpression(_ interface{}) (Expression, error) {
 	}
 }
 
-// createConjunctionStatement Creates Conjunction Statement from string
-func createConjunctionStatement(input string) *ConjunctionStatement {
+// createConjunctionStmt Creates Conjunction Statement from string
+func createConjunctionStmt(input string) *ConjunctionStatement {
 	conjunction, err := toConjunction(input)
 	if err != nil {
 		panic(err)

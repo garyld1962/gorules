@@ -1,20 +1,5 @@
 package gorules
 
-// RuleSet ...
-type RuleSet struct {
-	rules []Rule
-}
-
-// Add rules to the RuleSet
-func (r *RuleSet) Add(rule Rule) {
-	r.rules = append(r.rules, rule)
-}
-
-//Evaluate all the rules in the Set
-func (r RuleSet) Evaluate() (bool, error) {
-	return true, nil
-}
-
 // Rule is just a collection of expressions
 type Rule struct {
 	expressions []*Expression
@@ -39,13 +24,13 @@ func reduceExpressions(accum Expression, expressions []*Expression) bool {
 
 	expr := *expressions[0]
 	if isConjunctionExpression(expr) {
-		conj, _ := expr.(*ConjunctionExpression)
+		conj, _ := expr.(ConjunctionExpression)
 		isTrue, _ := accum.Evaluate()
 		boolExpr := createBoolExpression(isTrue)
 		conj.Add(&boolExpr)
 		accum = conj
 	} else {
-		conj, _ := accum.(*ConjunctionExpression)
+		conj, _ := accum.(ConjunctionExpression)
 		isTrue, _ := expr.Evaluate()
 		boolExpr := createBoolExpression(isTrue)
 		conj.Add(&boolExpr)
@@ -68,3 +53,18 @@ func evaluateExpressions(expressions []*Expression) bool {
 	seedValue := determineSeedAccum(expressions)
 	return reduceExpressions(seedValue, expressions)
 }
+
+// // RuleSet ...
+// type RuleSet struct {
+// 	rules []Rule
+// }
+
+// // Add rules to the RuleSet
+// func (r *RuleSet) Add(rule Rule) {
+// 	r.rules = append(r.rules, rule)
+// }
+
+// //Evaluate all the rules in the Set
+// func (r RuleSet) Evaluate() (bool, error) {
+// 	return true, nil
+// }
