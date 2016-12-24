@@ -116,9 +116,7 @@ func contains(value, target string) (bool, error) {
 }
 
 func startsWith(value, target string) (bool, error) {
-
 	return strings.HasPrefix(value, target), nil
-
 }
 
 func endsWith(value, target string) (bool, error) {
@@ -284,3 +282,22 @@ func parseStringToJSONObject(jsonAsString string) map[string]interface{} {
 	}
 	return result
 }
+
+func startsWithIdentifier(toStartValue string) func(stringToCheck string) bool {
+	return func(stringToCheck string) bool {
+		return strings.HasPrefix(stringToCheck, toStartValue)
+	}
+}
+
+var startsWithSingleQuotes = startsWithIdentifier("'")
+
+func stringBetween(delimiter string) func(input string) string {
+	return func(input string) string {
+		if strings.Count(input, delimiter) < 2 {
+			return ""
+		}
+		return strings.Split(input, delimiter)[1]
+	}
+}
+
+var stringBetweenSingleQuotes = stringBetween("'")
