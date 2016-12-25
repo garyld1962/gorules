@@ -37,7 +37,11 @@ func createValueExpressionWithTarget(operatorText string, value string, target s
 }
 
 func createValueExpressionFromRuleStmt(rule *RuleStatement, data map[string]interface{}) Expression {
-	return createValueExpressionWithTarget(rule.Operator, selectValue(data, rule.Path).(string), rule.Target)
+
+	source, _ := rule.Source.Evaluate(data)
+	target, _ := rule.Target.Evaluate(data)
+
+	return createValueExpressionWithTarget(rule.Operator, decodeSpace(source), decodeSpace(target))
 }
 
 // ConjunctionExpression used to combine any type of Expressions
@@ -83,12 +87,13 @@ func createConjuntionExprFromCollectionStmt(ruleStmt *RuleStatement, data map[st
 	}
 
 	conjExpr := selectorConjExprMap(selector)
-	arrayPath, key := getArrayPathAndKey(ruleStmt.Path)
+	arrayPath, key := getArrayPathAndKey(ruleStmt.Source.String())
 	arrayValue := selectValue(data, arrayPath).([]interface{})
 
 	for _, x := range arrayValue {
 		valueToCompare := selectValue(x.(map[string]interface{}), key).(string)
-		valExp := createValueExpressionWithTarget(ruleStmt.Operator, valueToCompare, ruleStmt.Target)
+		target, _ := ruleStmt.Target.Evaluate(x)
+		valExp := createValueExpressionWithTarget(ruleStmt.Operator, valueToCompare, target)
 
 		conjExpr.Add(&valExp)
 	}

@@ -9,44 +9,48 @@ type Expressionable interface {
 type RuleStatement struct {
 	Branch   string `json:"branch"`
 	Selector string `json:"selector"`
-	Path     string `json:"path"`
 	Operator string `json:"operator"`
-	Target   string `json:"target"`
+	Source   Value  `json:"source"`
+	Target   Value  `json:"target"`
 }
 
 // ToExpression makes the RuleStatement Expressionable
 func (r *RuleStatement) ToExpression(data interface{}) (Expression, error) {
-	if isSelector(r.Selector) {
-		selector, _ := toSelector(r.Selector)
-		selectionFunction := selectorFunctions(selector)
-		return selectionFunction(r, data.(map[string]interface{})), nil
+
+	selector, err := toSelector(r.Selector)
+	if err != nil {
+		return nil, err
 	}
-	_, err := toSelector(r.Selector)
-	return nil, err
+	selectionFunction := selectorFunctions(selector)
+	return selectionFunction(r, data.(map[string]interface{})), nil
 }
 
 // createRuleStmt creates a RuleStatement with defaults
 func createRuleStmt(input string) *RuleStatement {
-	parsed := stringSlice(reverse(spiltWithSpace(input)))
-	ruleStmt := &RuleStatement{Target: parsed.getOrEmpty(0),
+
+	parsed := stringSlice(reverse(spiltWithSpace(encodeString(input))))
+
+	ruleStmt := &RuleStatement{
+		Target:   NewValue(parsed.getOrEmpty(0)),
+		Source:   NewValue(parsed.getOrDefault(2, "data")),
 		Operator: parsed.getOrEmpty(1),
-		Path:     parsed.getOrDefault(2, "data"),
 		Selector: parsed.getOrDefault(3, "THIS"),
 		Branch:   parsed.getOrDefault(4, "IF")}
 	return ruleStmt
 }
 
-// createRuleStmtFromExisting creates a RuleStatement with defaults
+// createRuleStmtFromExisting creates a RuleStatement and fills the missing values from the existingRule provided
 func createRuleStmtFromExisting(existingRule Expressionable, input string) *RuleStatement {
-	parsed := stringSlice(reverse(spiltWithSpace(input)))
+	parsed := stringSlice(reverse(spiltWithSpace(encodeString(input))))
 	var rule *RuleStatement
 	if existingRule != nil {
-		existingRulevalue := existingRule.(*RuleStatement)
-		rule = &RuleStatement{Target: parsed.getOrEmpty(0),
-			Operator: parsed.getOrDefault(1, existingRulevalue.Operator),
-			Path:     parsed.getOrDefault(2, existingRulevalue.Path),
-			Selector: parsed.getOrDefault(3, existingRulevalue.Selector),
-			Branch:   parsed.getOrDefault(4, existingRulevalue.Branch)}
+		existRuleVal := existingRule.(*RuleStatement)
+		rule = &RuleStatement{
+			Target:   NewValue(parsed.getOrEmpty(0)),
+			Source:   NewValue(parsed.getOrDefault(2, existRuleVal.Source.String())),
+			Operator: parsed.getOrDefault(1, existRuleVal.Operator),
+			Selector: parsed.getOrDefault(3, existRuleVal.Selector),
+			Branch:   parsed.getOrDefault(4, existRuleVal.Branch)}
 
 	} else {
 		rule = createRuleStmt(input)

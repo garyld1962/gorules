@@ -34,8 +34,8 @@ func TestStartsWithQuotesFail(t *testing.T) {
 }
 
 func TestStringBetweenSingleQuotesPass(t *testing.T) {
-	s := "'test'"
-	assert.Equal(t, "test", stringBetweenSingleQuotes(s), "stringBetweenSingleQuotes works")
+	s := "country isEQUALTO 'USA'"
+	assert.Equal(t, "USA", stringBetweenSingleQuotes(s), "stringBetweenSingleQuotes works")
 }
 
 func TestStringBetweenSingleQuotesFail(t *testing.T) {

@@ -289,11 +289,15 @@ func startsWithIdentifier(toStartValue string) func(stringToCheck string) bool {
 	}
 }
 
+func hasStringBetween(delimiter string, input string) bool {
+	return strings.Count(input, delimiter) >= 2
+}
+
 var startsWithSingleQuotes = startsWithIdentifier("'")
 
 func stringBetween(delimiter string) func(input string) string {
 	return func(input string) string {
-		if strings.Count(input, delimiter) < 2 {
+		if !hasStringBetween(delimiter, input) {
 			return ""
 		}
 		return strings.Split(input, delimiter)[1]
@@ -301,3 +305,56 @@ func stringBetween(delimiter string) func(input string) string {
 }
 
 var stringBetweenSingleQuotes = stringBetween("'")
+
+func surroundBy(delimiter string) func(input string) string {
+	return func(input string) string {
+		return concatStrings(delimiter + input + delimiter)
+	}
+}
+
+var surroundBySingleQuotes = surroundBy("'")
+
+func encodeSpace(input string) string {
+	return strings.Replace(input, " ", "!+!", -1)
+}
+
+func decodeSpace(input string) string {
+	return strings.Replace(input, "!+!", " ", -1)
+}
+
+func encodeString(input string) string {
+	return recursiveEncode("", input)
+}
+
+func recursiveEncode(accum, input string) string {
+	v := strings.Count(input, "'")
+	if v == 0 {
+		return accum + input
+	}
+
+	arr := strings.SplitN(input, "'", 2)
+	current := arr[0]
+	remaining := arr[1]
+	if v%2 != 0 {
+		current = surroundBySingleQuotes(encodeSpace(current))
+	}
+	return recursiveEncode(accum+current, remaining)
+}
+
+// func Totest(input string) string {
+// 	v := strings.Count(input, "'")
+// 	var result = ""
+// 	var temp = ""
+// 	var arr []string
+// 	for i := 1; i <= v; i++ {
+// 		arr = strings.SplitN(input, "'", 2)
+// 		temp = arr[0]
+// 		input = arr[1]
+// 		if i%2 == 0 {
+// 			temp = surroundBySingleQuotes(encodeSpace(temp))
+// 		}
+
+// 		result = concatStrings(result, temp)
+// 	}
+// 	return result
+// }

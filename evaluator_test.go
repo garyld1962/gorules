@@ -55,23 +55,43 @@ var evaluatorTestData = `{
 // 	assert.True(t, result)
 // }
 
+func TestCompareValueAndValue(t *testing.T) {
+	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo 'SOUTH A'", parserTestData)
+	assert.True(t, result)
+}
+
+func TestCompareValueAndPath(t *testing.T) {
+	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo country", parserTestData)
+	assert.True(t, result)
+}
+
+func TestComparePathAndValue(t *testing.T) {
+	result := gorules.DSLEvaluator("country IsEqualTo 'SOUTH A'", parserTestData)
+	assert.True(t, result)
+}
+
+func TestComparePathAndPath(t *testing.T) {
+	result := gorules.DSLEvaluator("country IsEqualTo country", parserTestData)
+	assert.True(t, result)
+}
+
 func TestAllSelectorPass(t *testing.T) {
-	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo 11", evaluatorTestData)
+	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo '11'", evaluatorTestData)
 	assert.True(t, result)
 }
 
 func TestAllSelectorFail(t *testing.T) {
-	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo 0", evaluatorTestData)
+	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo '0'", evaluatorTestData)
 	assert.False(t, result)
 }
 
 func TestAnySelectorPass(t *testing.T) {
-	result := gorules.DSLEvaluator("ANY orderItems.availableInventory IsEqualTo NC", evaluatorTestData)
+	result := gorules.DSLEvaluator("ANY orderItems.availableInventory IsEqualTo 'NC'", evaluatorTestData)
 	assert.True(t, result)
 }
 
 func TestAnySelectorFail(t *testing.T) {
-	result := gorules.DSLEvaluator("ANY orderItems.weight IsEqualTo NV", evaluatorTestData)
+	result := gorules.DSLEvaluator("ANY orderItems.weight IsEqualTo 'NV'", evaluatorTestData)
 	assert.False(t, result)
 }
 

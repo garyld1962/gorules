@@ -12,7 +12,7 @@ var parserTestData = `{
   "zip5": 33076,
   "zip3": 333,
   "state": "FL",
-  "country": "USA",
+  "country": "SOUTH A",
   "subtotal": "25.00",
   "promoamount": 1.00,
   "testobj":{
@@ -57,6 +57,6 @@ var parserTestData = `{
 // }
 
 func TestCollectionalue(t *testing.T) {
-	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo 11", parserTestData)
+	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo country", parserTestData)
 	assert.True(t, result)
 }
