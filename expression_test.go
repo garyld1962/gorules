@@ -31,8 +31,3 @@ var testData = `{
 // 	tests := CreateOrConjunctionExpression(&gorules.FalseExpression)
 // 	assert.True(t, isConjunctionExpression(tests))
 // }
-
-// func TestIsConjunctionExpressionFail(t *testing.T) {
-// 	tests := CreateValueExpressionWithTarget("IsEqualTo", "test", "USA", "USA")
-// 	assert.False(t, isConjunctionExpression(tests))
-// }

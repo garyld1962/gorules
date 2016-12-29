@@ -14,11 +14,11 @@ var evaluatorTestData = `{
   "zip5": 33076,
   "zip3": 333,
   "state": "FL",
-  "country": "USA",
+  "country": "SOUTH A",
   "subtotal": "25.00",
   "promoamount": 1.00,
   "testobj":{
-      "id": 3,
+      "id": "3",
       "productId": 34354,
       "quantity": 3,
       "warehouse": "",
@@ -55,23 +55,36 @@ var evaluatorTestData = `{
 // 	assert.True(t, result)
 // }
 
-func TestCompareValueAndValue(t *testing.T) {
-	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo 'SOUTH A'", parserTestData)
-	assert.True(t, result)
-}
+// func TestCompareValueAndValue(t *testing.T) {
+// 	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo 'SOUTH A'", evaluatorTestData)
+// 	assert.True(t, result)
+// }
+
+// var testStringSlice = `country IsEqualTo '10' AND
+//                        country IsEqualTo '100' OR
+//                        country IsEqualTo 'USA' OR
+// 					   country IsEqualTo 'CANADA'
+//                        AND
+//                        state IsEqualTo 'FL' AND
+// 					   country IsEqualTo 'USA'`
+
+var testStringSlice = `country IsEqualTo 'USA' OR
+					   country IsEqualTo 'SOUTH A'`
+
+//    state IsEqualTo 'FL' AND
 
 func TestCompareValueAndPath(t *testing.T) {
-	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo country", parserTestData)
+	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo country", evaluatorTestData)
 	assert.True(t, result)
 }
 
 func TestComparePathAndValue(t *testing.T) {
-	result := gorules.DSLEvaluator("country IsEqualTo 'SOUTH A'", parserTestData)
+	result := gorules.DSLEvaluator("country IsEqualTo 'SOUTH A'", evaluatorTestData)
 	assert.True(t, result)
 }
 
 func TestComparePathAndPath(t *testing.T) {
-	result := gorules.DSLEvaluator("country IsEqualTo country", parserTestData)
+	result := gorules.DSLEvaluator("country IsEqualTo country", evaluatorTestData)
 	assert.True(t, result)
 }
 
@@ -94,6 +107,18 @@ func TestAnySelectorFail(t *testing.T) {
 	result := gorules.DSLEvaluator("ANY orderItems.weight IsEqualTo 'NV'", evaluatorTestData)
 	assert.False(t, result)
 }
+
+func TestSingleConjunction(t *testing.T) {
+	result := gorules.DSLEvaluator("OR", evaluatorTestData)
+	assert.False(t, result)
+}
+
+// func TestWithPrecedence(t *testing.T) {
+
+// 	result := gorules.DSLEvaluatorWithP(testStringSlice, evaluatorTestData)
+// 	fmt.Println(result)
+// 	assert.False(t, false)
+// }
 
 /*
 func TestIsNull(t *testing.T) {

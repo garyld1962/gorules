@@ -266,7 +266,13 @@ func splitString(delimiter string) func(string) []string {
 
 var spiltWithSpace = splitString(" ")
 
+var spiltWithNewLine = splitString("\n")
+
 var spiltWithDot = splitString(".")
+
+func lines(input string) StringSlice {
+	return StringSlice(spiltWithNewLine(input)).Map(trim)
+}
 
 func getArrayPathAndKey(path string) (string, string) {
 	s := spiltWithDot(path)
@@ -314,6 +320,8 @@ func surroundBy(delimiter string) func(input string) string {
 
 var surroundBySingleQuotes = surroundBy("'")
 
+var surroundByPrecendenceMark = surroundBy("%%")
+
 func encodeSpace(input string) string {
 	return strings.Replace(input, " ", "!+!", -1)
 }
@@ -323,10 +331,10 @@ func decodeSpace(input string) string {
 }
 
 func encodeString(input string) string {
-	return recursiveEncode("", input)
+	return recursiveSpaceEncode("", input)
 }
 
-func recursiveEncode(accum, input string) string {
+func recursiveSpaceEncode(accum, input string) string {
 	v := strings.Count(input, "'")
 	if v == 0 {
 		return accum + input
@@ -338,23 +346,48 @@ func recursiveEncode(accum, input string) string {
 	if v%2 != 0 {
 		current = surroundBySingleQuotes(encodeSpace(current))
 	}
-	return recursiveEncode(accum+current, remaining)
+	return recursiveSpaceEncode(accum+current, remaining)
 }
 
-// func Totest(input string) string {
-// 	v := strings.Count(input, "'")
-// 	var result = ""
-// 	var temp = ""
-// 	var arr []string
-// 	for i := 1; i <= v; i++ {
-// 		arr = strings.SplitN(input, "'", 2)
-// 		temp = arr[0]
-// 		input = arr[1]
-// 		if i%2 == 0 {
-// 			temp = surroundBySingleQuotes(encodeSpace(temp))
-// 		}
+func notEmpty(input string) bool {
+	return input != ""
+}
 
-// 		result = concatStrings(result, temp)
-// 	}
-// 	return result
-// }
+func lastElement(arr []string) string {
+	return arr[len(arr)-1]
+}
+
+func lastButAllElements(arr []string) []string {
+	return arr[:(len(arr) - 1)]
+}
+
+func makeLastWordFirst(input string) string {
+	strList := spiltWithSpace(trim(input))
+	lstElmt := lastElement(strList)
+	lstButAll := lastButAllElements(strList)
+	swapped := append([]string{lstElmt}, lstButAll...)
+	return strings.Join(swapped, " ")
+}
+
+func markPrecedence(input string) string {
+	return recursivePrecedenceMarker("", StringSlice(reverse(lines(input))))
+}
+
+func recursivePrecedenceMarker(accum string, input StringSlice) string {
+
+	if len(input) == 0 {
+		return accum
+	}
+	firstEle := input[0]
+
+	if isConjunction(firstEle) {
+		// fmt.Println("1", input, firstEle, surroundByPrecendenceMark(firstEle))
+		return recursivePrecedenceMarker(concatStrings(accum, surroundByPrecendenceMark(firstEle), " "), input[1:])
+	} else if endsWithConjunction(firstEle) {
+		// fmt.Println("2", input, firstEle, makeLastWordFirst(firstEle))
+		return recursivePrecedenceMarker(concatStrings(accum, makeLastWordFirst(firstEle), " "), input[1:])
+	} else {
+		// fmt.Println("3", input, firstEle, firstEle)
+		return recursivePrecedenceMarker(concatStrings(accum, firstEle, " "), input[1:])
+	}
+}

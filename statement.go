@@ -16,7 +16,7 @@ type RuleStatement struct {
 
 // ToExpression makes the RuleStatement Expressionable
 func (r *RuleStatement) ToExpression(data interface{}) (Expression, error) {
-
+	//fmt.Println("Statement", *r)
 	selector, err := toSelector(r.Selector)
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func (r *RuleStatement) ToExpression(data interface{}) (Expression, error) {
 // createRuleStmt creates a RuleStatement with defaults
 func createRuleStmt(input string) *RuleStatement {
 
-	parsed := stringSlice(reverse(spiltWithSpace(encodeString(input))))
+	parsed := StringSlice(reverse(spiltWithSpace(encodeString(input))))
 
 	ruleStmt := &RuleStatement{
 		Target:   NewValue(parsed.getOrEmpty(0)),
@@ -41,7 +41,7 @@ func createRuleStmt(input string) *RuleStatement {
 
 // createRuleStmtFromExisting creates a RuleStatement and fills the missing values from the existingRule provided
 func createRuleStmtFromExisting(existingRule Expressionable, input string) *RuleStatement {
-	parsed := stringSlice(reverse(spiltWithSpace(encodeString(input))))
+	parsed := StringSlice(reverse(spiltWithSpace(encodeString(input))))
 	var rule *RuleStatement
 	if existingRule != nil {
 		existRuleVal := existingRule.(*RuleStatement)

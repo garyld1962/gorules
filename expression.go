@@ -1,5 +1,9 @@
 package gorules
 
+import (
+	"fmt"
+)
+
 // Expression refers to anytype that can be evaluated
 type Expression interface {
 	Evaluate() (bool, error)
@@ -16,7 +20,7 @@ type ValueExpression struct {
 func (v ValueExpression) Evaluate() (bool, error) {
 	operatorFunc := operatorFuncList[v.Operator]
 	result, err := operatorFunc(v.Value, v.Target)
-	// fmt.Println(v, result)
+	fmt.Println("Evaluate", v, result)
 	return result, err
 }
 
@@ -37,7 +41,7 @@ func createValueExpressionWithTarget(operatorText string, value string, target s
 }
 
 func createValueExpressionFromRuleStmt(rule *RuleStatement, data map[string]interface{}) Expression {
-
+	fmt.Println("source", rule)
 	source, _ := rule.Source.Evaluate(data)
 	target, _ := rule.Target.Evaluate(data)
 
@@ -54,7 +58,7 @@ type ConjunctionExpression struct {
 func (c ConjunctionExpression) Evaluate() (bool, error) {
 
 	evaluator, accumlator := conjunctionExprProperties(c.Conjunction)
-
+	fmt.Println(c.Expressions)
 	for _, e := range c.Expressions {
 		var resultBool, _ = evaluator(accumlator, (*e))
 		accumlator = createBoolExpression(resultBool)
@@ -101,7 +105,8 @@ func createConjuntionExprFromCollectionStmt(ruleStmt *RuleStatement, data map[st
 }
 
 func isConjunctionExpression(expr Expression) bool {
-	_, ok := expr.(*ConjunctionExpression)
+	x, ok := expr.(ConjunctionExpression)
+	fmt.Println("conv", x, ok)
 	return ok
 }
 
