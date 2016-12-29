@@ -62,7 +62,7 @@ func (c ConjunctionExpression) Evaluate() (bool, error) {
 	return accumlator.Evaluate()
 }
 
-// Add the expression to be evaluated into the conjunction espression list
+// Add the expression to be evaluated into the conjunction espression
 func (c *ConjunctionExpression) Add(expr *Expression) {
 	c.Expressions = append(c.Expressions, expr)
 }
