@@ -57,9 +57,9 @@ var selectorFuncList = map[Selector]selectorFunc{
 }
 
 var selectorConjExprList = map[Selector]ConjunctionExpression{
-	This: createOrConjunctionExpression(&FalseExpression).(ConjunctionExpression),
-	Any:  createOrConjunctionExpression(&FalseExpression).(ConjunctionExpression),
-	All:  createAndConjunctionExpression(&TrueExpression).(ConjunctionExpression),
+	This: createOrConjunctionExpression(FalseExpression).(ConjunctionExpression),
+	Any:  createOrConjunctionExpression(FalseExpression).(ConjunctionExpression),
+	All:  createAndConjunctionExpression(TrueExpression).(ConjunctionExpression),
 }
 
 func selectorFunctions(selector Selector) selectorFunc {

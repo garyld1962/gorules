@@ -30,7 +30,7 @@ func reduceExpressions(accum Expression, expressions []Expression) bool {
 		value, _ := accum.Evaluate()
 		if isConjunctionExpression(accum) {
 			for _, x := range accum.(ConjunctionExpression).Expressions {
-				fmt.Println("INI Expressions", *x)
+				fmt.Println("INI Expressions", x)
 			}
 		}
 
@@ -53,14 +53,14 @@ func reduceExpressions(accum Expression, expressions []Expression) bool {
 		conj, _ := expr.(ConjunctionExpression)
 		isTrue, _ := accum.Evaluate()
 		boolExpr := createBoolExpression(isTrue)
-		conj.Add(&boolExpr)
+		conj = conj.Add(boolExpr)
 		accum = conj
 	} else {
 		fmt.Println("Value Loop")
 		conj, _ := accum.(ConjunctionExpression)
 		isTrue, _ := expr.Evaluate()
 		boolExpr := createBoolExpression(isTrue)
-		conj.Add(&boolExpr)
+		conj = conj.Add(boolExpr)
 		accum = conj
 	}
 	fmt.Println("reduceExpressions-accum At END", accum)
@@ -76,7 +76,7 @@ func determineSeedAccum(expressions []Expression) Expression {
 		conjExpr := firstExpression.(ConjunctionExpression).Conjunction
 		return identityBool(conjExpr)
 	}
-	return createOrConjunctionExpression(&FalseExpression)
+	return createOrConjunctionExpression(FalseExpression)
 }
 
 func evaluateExpressions(expressions []Expression) bool {

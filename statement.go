@@ -67,11 +67,11 @@ type ConjunctionStatement struct {
 func (c *ConjunctionStatement) ToExpression(_ interface{}) (Expression, error) {
 	switch c.Conjunction {
 	case And:
-		return createAndConjunctionExpression(&TrueExpression), nil
+		return createAndConjunctionExpression(TrueExpression), nil
 	case Or:
-		return createOrConjunctionExpression(&FalseExpression), nil
+		return createOrConjunctionExpression(FalseExpression), nil
 	default:
-		return createAndConjunctionExpression(&TrueExpression), nil
+		return createAndConjunctionExpression(TrueExpression), nil
 	}
 }
 

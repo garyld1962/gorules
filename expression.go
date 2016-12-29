@@ -46,8 +46,8 @@ func createValueExpressionFromRuleStmt(rule *RuleStatement, data map[string]inte
 
 // ConjunctionExpression used to combine any type of Expressions
 type ConjunctionExpression struct {
-	Conjunction Conjunction   `json:"conjunction"`
-	Expressions []*Expression `json:"expressions"`
+	Conjunction Conjunction  `json:"conjunction"`
+	Expressions []Expression `json:"expressions"`
 }
 
 // Evaluate used to get the combined evaluated value of all the expressions using the Conjunction
@@ -56,25 +56,26 @@ func (c ConjunctionExpression) Evaluate() (bool, error) {
 	evaluator, accumlator := conjunctionExprProperties(c.Conjunction)
 	// fmt.Println(c.Expressions)
 	for _, e := range c.Expressions {
-		var resultBool, _ = evaluator(accumlator, (*e))
+		var resultBool, _ = evaluator(accumlator, (e))
 		accumlator = createBoolExpression(resultBool)
 	}
 	return accumlator.Evaluate()
 }
 
 // Add the expression to be evaluated into the conjunction espression
-func (c *ConjunctionExpression) Add(expr *Expression) {
+func (c ConjunctionExpression) Add(expr Expression) ConjunctionExpression {
 	c.Expressions = append(c.Expressions, expr)
+	return c
 }
 
 var createAndConjunctionExpression = createConjunctionExpression(And)
 
 var createOrConjunctionExpression = createConjunctionExpression(Or)
 
-func createConjunctionExpression(conjunction Conjunction) func(*Expression) Expression {
-	return func(expr *Expression) Expression {
+func createConjunctionExpression(conjunction Conjunction) func(Expression) Expression {
+	return func(expr Expression) Expression {
 		conj := ConjunctionExpression{Conjunction: conjunction}
-		conj.Add(expr)
+		conj = conj.Add(expr)
 		return conj
 	}
 }
@@ -95,7 +96,7 @@ func createConjuntionExprFromCollectionStmt(ruleStmt *RuleStatement, data map[st
 		target, _ := ruleStmt.Target.Evaluate(x)
 		valExp := createValueExpressionWithTarget(ruleStmt.Operator, valueToCompare, target)
 
-		conjExpr.Add(&valExp)
+		conjExpr = conjExpr.Add(valExp)
 	}
 	return conjExpr
 }
