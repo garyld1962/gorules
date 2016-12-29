@@ -8,5 +8,5 @@ import (
 
 func TestCreateConjunctionStmt(t *testing.T) {
 	conjunction := createConjunctionStmt("AND")
-	assert.Equal(t, (*conjunction).Conjunction, And)
+	assert.Equal(t, (conjunction).Conjunction, And)
 }

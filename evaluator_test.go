@@ -93,7 +93,7 @@ func TestComparePathAndValue(t *testing.T) {
 }
 
 func TestComparePathAndPath(t *testing.T) {
-	result := gorules.DSLEvaluator("country IsEqualTo country", evaluatorTestData)
+	result := gorules.DSLEvaluator("country IsEqualTo country AND country IsEqualTo country", evaluatorTestData)
 	assert.True(t, result)
 }
 

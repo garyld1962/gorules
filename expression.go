@@ -23,7 +23,7 @@ func (v ValueExpression) Evaluate() (bool, error) {
 func createValueExpression(operatorText string, value string) Expression {
 	operator, err := toOperator(operatorText)
 	if err == nil {
-		return &ValueExpression{Operator: operator, Value: value}
+		return ValueExpression{Operator: operator, Value: value}
 	}
 	panic(err)
 }
@@ -31,12 +31,12 @@ func createValueExpression(operatorText string, value string) Expression {
 func createValueExpressionWithTarget(operatorText string, value string, target string) Expression {
 	operator, err := toOperator(operatorText)
 	if err == nil {
-		return &ValueExpression{Operator: operator, Value: value, Target: target}
+		return ValueExpression{Operator: operator, Value: value, Target: target}
 	}
 	panic(err)
 }
 
-func createValueExpressionFromRuleStmt(rule *RuleStatement, data map[string]interface{}) Expression {
+func createValueExpressionFromRuleStmt(rule RuleStatement, data map[string]interface{}) Expression {
 	// fmt.Println("source", rule)
 	source, _ := rule.Source.Evaluate(data)
 	target, _ := rule.Target.Evaluate(data)
@@ -80,7 +80,7 @@ func createConjunctionExpression(conjunction Conjunction) func(Expression) Expre
 	}
 }
 
-func createConjuntionExprFromCollectionStmt(ruleStmt *RuleStatement, data map[string]interface{}) Expression {
+func createConjuntionExprFromCollectionStmt(ruleStmt RuleStatement, data map[string]interface{}) Expression {
 	selector, err := toSelector(ruleStmt.Selector)
 
 	if err != nil {
