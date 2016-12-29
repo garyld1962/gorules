@@ -369,6 +369,17 @@ func makeLastWordFirst(input string) string {
 	return strings.Join(swapped, " ")
 }
 
+func first(list []string) string {
+	if len(list) == 0 {
+		return ""
+	}
+	return list[0]
+}
+
+func firstExpr(list []Expression) Expression {
+	return list[0]
+}
+
 func markPrecedence(input string) string {
 	return recursivePrecedenceMarker("", StringSlice(reverse(lines(input))))
 }

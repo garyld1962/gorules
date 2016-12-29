@@ -40,13 +40,13 @@ func reduceExpressions(accum Expression, expressions []Expression) bool {
 		return value
 	}
 
-	expr := expressions[0]
-	ok := isRule(expr)
+	expr := firstExpr(expressions)
+	// ok := isRule(expr)
 
-	if ok {
-		newExp := expr.(Rule)
-		expr = (newExp.expressions[0])
-	}
+	// if ok {
+	// 	newExp := expr.(Rule)
+	// 	expr = (newExp.expressions[0])
+	// }
 	fmt.Println("----------------------------------------------")
 	fmt.Println("reduceExpressions- Starts", expr)
 	fmt.Println("reduceExpressions-accum At START", accum)
@@ -73,7 +73,7 @@ func reduceExpressions(accum Expression, expressions []Expression) bool {
 
 func determineSeedAccum(expressions []Expression) Expression {
 	// fmt.Println("5", expressions)
-	firstExpression := expressions[0]
+	firstExpression := firstExpr(expressions)
 	if isConjunctionExpression(firstExpression) {
 		conjExpr := firstExpression.(ConjunctionExpression).Conjunction
 		return identityBool(conjExpr)
