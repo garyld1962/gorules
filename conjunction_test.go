@@ -39,3 +39,18 @@ func TestIsOperatorFail(t *testing.T) {
 	isConjunction := isConjunction("AN")
 	assert.False(t, isConjunction)
 }
+
+func TestContainsConjunctionPass(t *testing.T) {
+	tests := endsWithConjunction("shipping.shippingweight  ISLESSTHAN 100 AND")
+	assert.True(t, tests)
+}
+
+func TestContainsConjunctionFail(t *testing.T) {
+	tests := endsWithConjunction("shipping.shippingweight ISLESSTHAN 100")
+	assert.False(t, tests)
+}
+
+func TestContainsConjunctionSingleWordConjunction(t *testing.T) {
+	tests := endsWithConjunction("AND")
+	assert.False(t, tests)
+}

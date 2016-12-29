@@ -82,3 +82,18 @@ func identityBool(conjuntion Conjunction) Expression {
 func conjunctionExprProperties(conjunction Conjunction) (conjunctionFunc, Expression) {
 	return conjunctionFunction(conjunction), identityBool(conjunction)
 }
+
+func endsWithConjunction(input string) bool {
+
+	strList := spiltWithSpace(trim(input))
+
+	if len(strList) > 1 {
+		lstElmt := lastElement(strList)
+
+		if isConjunction(lstElmt) {
+			return true
+		}
+
+	}
+	return false
+}

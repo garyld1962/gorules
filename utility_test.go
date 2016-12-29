@@ -1,10 +1,20 @@
 package gorules
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+var testStringSlice = `shipping.shippingweight ISGREATERTHAN |shipping.totalshippingweight + 2|  AND
+                       shipping.shippingweight ISLESSTHAN 100 OR
+                       shipping.country EQUALS USA OR
+					   shipping.country EQUALS CANADA
+                       AND
+                       state EQUALS FL AND 
+					   country EQUALS USA`
 
 func TestGetNumber(t *testing.T) {
 	n, _ := getNumber("32")
@@ -42,3 +52,28 @@ func TestStringBetweenSingleQuotesFail(t *testing.T) {
 	s := "test"
 	assert.Equal(t, "", stringBetweenSingleQuotes(s), "stringBetweenSingleQuotes works")
 }
+
+func TestLastButAllElement(t *testing.T) {
+	tests := lastButAllElements(strings.Split("The quick brown", " "))
+	fmt.Println(tests)
+	assert.Equal(t, 2, len(tests))
+}
+
+func TestMakeLastWordFirst(t *testing.T) {
+	tests := makeLastWordFirst("shipping.shippingweight  ISLESSTHAN 100 OR")
+	fmt.Println(tests)
+	out, _ := startsWith(tests, "OR")
+	assert.True(t, out)
+}
+
+// func TestLines(t *testing.T) {
+// 	lineList := lines(testStringSlice)
+// 	fmt.Println(lineList)
+// 	assert.Equal(t, 5, len(lineList))
+// }
+
+// func TestPrecedene(t *testing.T) {
+// 	lineList := markPrecedence(testStringSlice)
+// 	fmt.Println(lineList)
+// 	assert.True(t, true)
+// }

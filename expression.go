@@ -16,14 +16,14 @@ type ValueExpression struct {
 func (v ValueExpression) Evaluate() (bool, error) {
 	operatorFunc := operatorFuncList[v.Operator]
 	result, err := operatorFunc(v.Value, v.Target)
-	// fmt.Println(v, result)
+	// fmt.Println("Evaluate", v, result)
 	return result, err
 }
 
 func createValueExpression(operatorText string, value string) Expression {
 	operator, err := toOperator(operatorText)
 	if err == nil {
-		return &ValueExpression{Operator: operator, Value: value}
+		return ValueExpression{Operator: operator, Value: value}
 	}
 	panic(err)
 }
@@ -31,13 +31,13 @@ func createValueExpression(operatorText string, value string) Expression {
 func createValueExpressionWithTarget(operatorText string, value string, target string) Expression {
 	operator, err := toOperator(operatorText)
 	if err == nil {
-		return &ValueExpression{Operator: operator, Value: value, Target: target}
+		return ValueExpression{Operator: operator, Value: value, Target: target}
 	}
 	panic(err)
 }
 
-func createValueExpressionFromRuleStmt(rule *RuleStatement, data map[string]interface{}) Expression {
-
+func createValueExpressionFromRuleStmt(rule RuleStatement, data map[string]interface{}) Expression {
+	// fmt.Println("source", rule)
 	source, _ := rule.Source.Evaluate(data)
 	target, _ := rule.Target.Evaluate(data)
 
@@ -46,40 +46,41 @@ func createValueExpressionFromRuleStmt(rule *RuleStatement, data map[string]inte
 
 // ConjunctionExpression used to combine any type of Expressions
 type ConjunctionExpression struct {
-	Conjunction Conjunction   `json:"conjunction"`
-	Expressions []*Expression `json:"expressions"`
+	Conjunction Conjunction  `json:"conjunction"`
+	Expressions []Expression `json:"expressions"`
 }
 
 // Evaluate used to get the combined evaluated value of all the expressions using the Conjunction
 func (c ConjunctionExpression) Evaluate() (bool, error) {
 
 	evaluator, accumlator := conjunctionExprProperties(c.Conjunction)
-
+	// fmt.Println(c.Expressions)
 	for _, e := range c.Expressions {
-		var resultBool, _ = evaluator(accumlator, (*e))
+		var resultBool, _ = evaluator(accumlator, (e))
 		accumlator = createBoolExpression(resultBool)
 	}
 	return accumlator.Evaluate()
 }
 
-// Add the expression to be evaluated into the conjunction espression list
-func (c *ConjunctionExpression) Add(expr *Expression) {
+// Add the expression to be evaluated into the conjunction espression
+func (c ConjunctionExpression) Add(expr Expression) ConjunctionExpression {
 	c.Expressions = append(c.Expressions, expr)
+	return c
 }
 
 var createAndConjunctionExpression = createConjunctionExpression(And)
 
 var createOrConjunctionExpression = createConjunctionExpression(Or)
 
-func createConjunctionExpression(conjunction Conjunction) func(*Expression) Expression {
-	return func(expr *Expression) Expression {
+func createConjunctionExpression(conjunction Conjunction) func(Expression) Expression {
+	return func(expr Expression) Expression {
 		conj := ConjunctionExpression{Conjunction: conjunction}
-		conj.Add(expr)
+		conj = conj.Add(expr)
 		return conj
 	}
 }
 
-func createConjuntionExprFromCollectionStmt(ruleStmt *RuleStatement, data map[string]interface{}) Expression {
+func createConjuntionExprFromCollectionStmt(ruleStmt RuleStatement, data map[string]interface{}) Expression {
 	selector, err := toSelector(ruleStmt.Selector)
 
 	if err != nil {
@@ -95,13 +96,14 @@ func createConjuntionExprFromCollectionStmt(ruleStmt *RuleStatement, data map[st
 		target, _ := ruleStmt.Target.Evaluate(x)
 		valExp := createValueExpressionWithTarget(ruleStmt.Operator, valueToCompare, target)
 
-		conjExpr.Add(&valExp)
+		conjExpr = conjExpr.Add(valExp)
 	}
 	return conjExpr
 }
 
 func isConjunctionExpression(expr Expression) bool {
-	_, ok := expr.(*ConjunctionExpression)
+	_, ok := expr.(ConjunctionExpression)
+	// fmt.Println("conv", x, ok)
 	return ok
 }
 
