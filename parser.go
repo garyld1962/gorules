@@ -34,17 +34,17 @@ func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {
 
 		if !isConjunction(word) {
 			toParse = concatStrings(toParse, word, " ")
-			fmt.Println("toParse", word, toParse)
+			// fmt.Println("toParse", word, toParse)
 		} else {
 			if notEmpty(toParse) {
 				latestRuleStmt = createRuleStmtFromExisting(latestRuleStmt, trim(toParse))
-				fmt.Println("latestRuleStmt", latestRuleStmt)
+				// fmt.Println("latestRuleStmt", latestRuleStmt)
 				valueExpr, _ := latestRuleStmt.ToExpression(jsonObj)
 				ruleToEvaluate = ruleToEvaluate.Add(valueExpr)
 				toParse = ""
 			}
 			conjExpr, _ := createConjunctionStmt(word).ToExpression(jsonObj)
-			fmt.Println("conjExpr", conjExpr)
+			// fmt.Println("conjExpr", conjExpr)
 			ruleToEvaluate = ruleToEvaluate.Add(conjExpr)
 		}
 		// fmt.Println("2", ruleToEvaluate)
@@ -56,22 +56,23 @@ func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {
 		// fmt.Println("1", lastRuleExpr)
 		ruleToEvaluate = ruleToEvaluate.Add(lastRuleExpr)
 	}
-	for x, test := range ruleToEvaluate.expressions {
-		fmt.Println(x, "Expression Inner", test)
-	}
-	out, _ := ruleToEvaluate.Evaluate()
-	fmt.Println("3", ruleToEvaluate, out)
+	// for x, test := range ruleToEvaluate.expressions {
+	// 	fmt.Println(x, "Expression Inner", test)
+	// }
+	// out, _ := ruleToEvaluate.Evaluate()
+	// fmt.Println("3", ruleToEvaluate, out)
 	return ruleToEvaluate
 }
 
-func precedenceParser(accum Rule, doPush bool, lines []string, jsonObj map[string]interface{}) Expression {
+func precedenceParser(accum Rule, pushInExistingRule bool, lines []string, jsonObj map[string]interface{}) Expression {
 
 	if len(lines) == 0 {
 		return accum
 	}
 
 	var linetoWorkOn = first(lines)
-	if doPush {
+
+	if pushInExistingRule {
 		if isConjunction(linetoWorkOn) {
 			conjExpr, _ := createConjunctionStmt(linetoWorkOn).ToExpression(jsonObj)
 			accum = accum.Add(conjExpr)

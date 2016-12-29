@@ -3,21 +3,19 @@ package gorules
 import "fmt"
 
 // Rule is just a collection of expressions
-type Rule struct {
-	expressions []Expression
-}
+type Rule []Expression
 
 //Evaluate all the expressions in the rule
 func (r Rule) Evaluate() (bool, error) {
 	// fmt.Println("5", r.expressions)
-	result := evaluateExpressions(r.expressions)
+	result := evaluateExpressions(r)
 	return result, nil
 }
 
 //Add Expressions to the Rule
 func (r Rule) Add(expression Expression) Rule {
 	// fmt.Println("4", expression)
-	r.expressions = append(r.expressions, expression)
+	r = append(r, expression)
 	// fmt.Println("4", r.expressions[0])
 	return r
 }
@@ -85,18 +83,3 @@ func evaluateExpressions(expressions []Expression) bool {
 	seedValue := determineSeedAccum(expressions)
 	return reduceExpressions(seedValue, expressions)
 }
-
-// // RuleSet ...
-// type RuleSet struct {
-// 	rules []Rule
-// }
-
-// // Add rules to the RuleSet
-// func (r *RuleSet) Add(rule Rule) {
-// 	r.rules = append(r.rules, rule)
-// }
-
-// //Evaluate all the rules in the Set
-// func (r RuleSet) Evaluate() (bool, error) {
-// 	return true, nil
-// }
