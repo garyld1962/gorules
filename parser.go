@@ -19,7 +19,7 @@ func (fn ruleParserFunc) Parse(dslText string, dataAsJSON map[string]interface{}
 var ParseDSL = ruleParserFunc(parseDSLToExpr)
 
 // ParseDSLWithPrecedence parses DSL with new lines and precedence
-var ParseDSLWithPrecedence = ruleParserFunc(callPrecedenceParser)
+var ParseDSLWithPrecedence = ruleParserFunc(precedenceParser)
 
 func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {
 	fmt.Println("2", dslText)
@@ -65,7 +65,7 @@ func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {
 	return ruleToEvaluate
 }
 
-func precedenceParser(accum Rule, pushInExistingRule bool, lines []string, jsonObj map[string]interface{}) Expression {
+func precedenceParserRecursive(accum Rule, pushInExistingRule bool, lines []string, jsonObj map[string]interface{}) Expression {
 
 	if len(lines) == 0 {
 		return accum
@@ -77,15 +77,15 @@ func precedenceParser(accum Rule, pushInExistingRule bool, lines []string, jsonO
 		if isConjunction(linetoWorkOn) {
 			conjExpr, _ := createConjunctionStmt(linetoWorkOn).ToExpression(jsonObj)
 			accum = accum.Add(conjExpr)
-			return precedenceParser(accum, true, lines[1:], jsonObj)
+			return precedenceParserRecursive(accum, true, lines[1:], jsonObj)
 		} else if endsWithConjunction(linetoWorkOn) {
 			rule := parseDSLToExpr(linetoWorkOn, jsonObj).(Rule)
-			rule = rule.Add(precedenceParser(rule, false, lines[1:], jsonObj))
+			rule = rule.Add(precedenceParserRecursive(rule, false, lines[1:], jsonObj))
 			return rule
 		} else {
 			expr := parseDSLToExpr(linetoWorkOn, jsonObj)
 			accum = accum.Add(expr)
-			return precedenceParser(accum, true, lines[1:], jsonObj)
+			return precedenceParserRecursive(accum, true, lines[1:], jsonObj)
 		}
 	} else {
 		rule := parseDSLToExpr(linetoWorkOn, jsonObj).(Rule)
@@ -93,6 +93,6 @@ func precedenceParser(accum Rule, pushInExistingRule bool, lines []string, jsonO
 	}
 }
 
-func callPrecedenceParser(dslText string, jsonObj map[string]interface{}) Expression {
-	return precedenceParser(Rule{}, true, lines(dslText), jsonObj)
+func precedenceParser(dslText string, jsonObj map[string]interface{}) Expression {
+	return precedenceParserRecursive(Rule{}, true, lines(dslText), jsonObj)
 }
