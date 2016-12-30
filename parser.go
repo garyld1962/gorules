@@ -18,6 +18,7 @@ func (fn ruleParserFunc) Parse(dslText string, dataAsJSON map[string]interface{}
 //ParseDSL parses the DSL with space and creates Rule
 var ParseDSL = ruleParserFunc(parseDSLToExpr)
 
+// ParseDSLWithPrecedence parses DSL with new lines and precedence
 var ParseDSLWithPrecedence = ruleParserFunc(callPrecedenceParser)
 
 func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {

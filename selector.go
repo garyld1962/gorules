@@ -51,7 +51,7 @@ func isSelector(value string) bool {
 type selectorFunc func(RuleStatement, map[string]interface{}) Expression
 
 var selectorFuncList = map[Selector]selectorFunc{
-	This: createValueExpressionFromRuleStmt,
+	This: createRuleExpressionFromRuleStmt,
 	Any:  createConjuntionExprFromCollectionStmt,
 	All:  createConjuntionExprFromCollectionStmt,
 }

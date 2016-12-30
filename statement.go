@@ -9,8 +9,8 @@ type Expressionable interface {
 type RuleStatement struct {
 	Branch   string `json:"branch"`
 	Selector string `json:"selector"`
-	Operator string `json:"operator"`
 	Source   Value  `json:"source"`
+	Operator string `json:"operator"`
 	Target   Value  `json:"target"`
 }
 
