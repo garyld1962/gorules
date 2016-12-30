@@ -281,7 +281,7 @@ func getArrayPathAndKey(path string) (string, string) {
 	return strings.Join(s[0:lengt-1], "."), final
 }
 
-func parseStringToJSONObject(jsonAsString string) map[string]interface{} {
+func ParseStringToJSONObject(jsonAsString string) map[string]interface{} {
 	result, err := objects.NewMapFromJSON(jsonAsString)
 	if err != nil {
 		panic(err)
@@ -299,6 +299,10 @@ func hasStringBetween(delimiter string, input string) bool {
 	return strings.Count(input, delimiter) >= 2
 }
 
+func hasOperatorBetween(operator string, input string) bool {
+	return strings.Count(input, operator) == 1
+}
+
 var startsWithSingleQuotes = startsWithIdentifier("'")
 
 func stringBetween(delimiter string) func(input string) string {
@@ -310,7 +314,19 @@ func stringBetween(delimiter string) func(input string) string {
 	}
 }
 
-var stringBetweenSingleQuotes = stringBetween("'")
+func operandsAndOperatorBetween(delimiter string) func(input string) []string {
+	return func(input string) []string {
+		if !hasStringBetween(delimiter, input) {
+			return []string{}
+		}
+		return strings.Split(input, delimiter)
+	}
+}
+
+//StringBetweenSingleQuotes parses string between delimitter
+var StringBetweenSingleQuotes = stringBetween("'")
+
+var parsedOperandsAndOperator = operandsAndOperatorBetween(" ")
 
 func surroundBy(delimiter string) func(input string) string {
 	return func(input string) string {
