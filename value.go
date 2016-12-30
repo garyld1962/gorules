@@ -1,6 +1,9 @@
 package gorules
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+)
 
 // Value refers to anytype that can be evaluated to a concrete string value
 type Value interface {
@@ -16,7 +19,7 @@ type Constant struct {
 // Evaluate returns the string from the Constant
 func (c Constant) Evaluate(_ interface{}) (string, error) {
 	if startsWithSingleQuotes(c.value) {
-		return stringBetweenSingleQuotes(c.value), nil
+		return StringBetweenSingleQuotes(c.value), nil
 	}
 	return "", errors.New("Not a Constant")
 }
@@ -62,14 +65,30 @@ func NewValue(value string) Value {
 
 // MathExpression is used to evaluate mathematical expressions on json values
 type MathExpression struct {
-	expression string
+	operand1 Value
+	operand2 Value
+	operator MathOperator
+}
+
+//NewMathExpression is a wrapper around MathExpression
+func NewMathExpression(expression string) MathExpression {
+	parsedOperandsAndOperatorValue := parsedOperandsAndOperator(expression)
+	multiplicationOperator, _ := toMathOperator(parsedOperandsAndOperatorValue[1])
+	return MathExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue[0])), operand2: NewValue(trim(parsedOperandsAndOperatorValue[2])), operator: multiplicationOperator}
 }
 
 // Evaluate works out the expression and returns the result as a string
 func (m MathExpression) Evaluate(_ interface{}) (string, error) {
-	return m.expression, nil
+	operand1, _ := m.operand1.Evaluate(make([]interface{}, 0))
+	operand2, _ := m.operand2.Evaluate(make([]interface{}, 0))
+	firstOperand, _ := strconv.Atoi(operand1)
+	secondOperand, _ := strconv.Atoi(operand2)
+	mathOperatorFunc := mathOperatorFuncList[m.operator]
+	result, err := mathOperatorFunc(firstOperand, secondOperand)
+	return strconv.Itoa(result), err
 }
 
 func (m MathExpression) String() string {
-	return m.expression
+	dummyValue, _ := m.operand1.Evaluate(make([]interface{}, 0))
+	return dummyValue
 }
