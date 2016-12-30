@@ -5,43 +5,43 @@ type Expression interface {
 	Evaluate() (bool, error)
 }
 
-// ValueExpression stores the value and target be Operated on.Can act with different operates
-type ValueExpression struct {
+// RuleExpression stores the value and target be Operated on.Can act with different operates
+type RuleExpression struct {
 	Operator Operator `json:"operator"`
 	Value    string   `json:"value"`
 	Target   string   `json:"target"`
 }
 
 // Evaluate used to eval an expression to a bool
-func (v ValueExpression) Evaluate() (bool, error) {
+func (v RuleExpression) Evaluate() (bool, error) {
 	operatorFunc := operatorFuncList[v.Operator]
 	result, err := operatorFunc(v.Value, v.Target)
 	// fmt.Println("Evaluate", v, result)
 	return result, err
 }
 
-func createValueExpression(operatorText string, value string) Expression {
+func createRuleExpression(operatorText string, value string) Expression {
 	operator, err := toOperator(operatorText)
 	if err == nil {
-		return ValueExpression{Operator: operator, Value: value}
+		return RuleExpression{Operator: operator, Value: value}
 	}
 	panic(err)
 }
 
-func createValueExpressionWithTarget(operatorText string, value string, target string) Expression {
+func createRuleExpressionWithTarget(operatorText string, value string, target string) Expression {
 	operator, err := toOperator(operatorText)
 	if err == nil {
-		return ValueExpression{Operator: operator, Value: value, Target: target}
+		return RuleExpression{Operator: operator, Value: value, Target: target}
 	}
 	panic(err)
 }
 
-func createValueExpressionFromRuleStmt(rule RuleStatement, data map[string]interface{}) Expression {
+func createRuleExpressionFromRuleStmt(rule RuleStatement, data map[string]interface{}) Expression {
 	// fmt.Println("source", rule)
 	source, _ := rule.Source.Evaluate(data)
 	target, _ := rule.Target.Evaluate(data)
 
-	return createValueExpressionWithTarget(rule.Operator, decodeSpace(source), decodeSpace(target))
+	return createRuleExpressionWithTarget(rule.Operator, decodeSpace(source), decodeSpace(target))
 }
 
 // ConjunctionExpression used to combine any type of Expressions
@@ -57,7 +57,7 @@ func (c ConjunctionExpression) Evaluate() (bool, error) {
 	// fmt.Println(c.Expressions)
 	for _, e := range c.Expressions {
 		var resultBool, _ = evaluator(accumlator, (e))
-		accumlator = createBoolExpression(resultBool)
+		accumlator = createBooleanExpression(resultBool)
 	}
 	return accumlator.Evaluate()
 }
@@ -94,7 +94,7 @@ func createConjuntionExprFromCollectionStmt(ruleStmt RuleStatement, data map[str
 	for _, x := range arrayValue {
 		valueToCompare := selectValue(x.(map[string]interface{}), key).(string)
 		target, _ := ruleStmt.Target.Evaluate(x)
-		valExp := createValueExpressionWithTarget(ruleStmt.Operator, valueToCompare, target)
+		valExp := createRuleExpressionWithTarget(ruleStmt.Operator, valueToCompare, target)
 
 		conjExpr = conjExpr.Add(valExp)
 	}
@@ -107,29 +107,29 @@ func isConjunctionExpression(expr Expression) bool {
 	return ok
 }
 
-// BoolValueExpression stores either true or false value as an Expression
-type BoolValueExpression bool
+// BooleanExpression stores either true or false value as an Expression
+type BooleanExpression bool
 
-// Evaluate makes BoolValueExpression implement Expression
-func (v BoolValueExpression) Evaluate() (bool, error) {
+// Evaluate makes BooleanExpression implement Expression
+func (v BooleanExpression) Evaluate() (bool, error) {
 	if v {
 		return true, nil
 	}
 	return false, nil
 }
 
-// createBoolExpression creates a BoolValueExpression with a bool
-func createBoolExpression(boolType bool) Expression {
+// createBooleanExpression creates a BooleanExpression with a bool
+func createBooleanExpression(boolType bool) Expression {
 	if boolType {
-		return BoolValueExpression(true)
+		return BooleanExpression(true)
 	}
-	return BoolValueExpression(false)
+	return BooleanExpression(false)
 }
 
 // TrueExpression always evaluates to True
-var TrueExpression = createBoolExpression(true)
+var TrueExpression = createBooleanExpression(true)
 
 // FalseExpression always evaluates to False
-var FalseExpression = createBoolExpression(false)
+var FalseExpression = createBooleanExpression(false)
 
 //-------------------------------------

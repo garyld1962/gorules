@@ -52,14 +52,14 @@ func reduceExpressions(accum Expression, expressions []Expression) bool {
 		fmt.Println("Conjuction Loop", expr)
 		conj, _ := expr.(ConjunctionExpression)
 		isTrue, _ := accum.Evaluate()
-		boolExpr := createBoolExpression(isTrue)
+		boolExpr := createBooleanExpression(isTrue)
 		conj = conj.Add(boolExpr)
 		accum = conj
 	} else {
 		fmt.Println("Value Loop")
 		conj, _ := accum.(ConjunctionExpression)
 		isTrue, _ := expr.Evaluate()
-		boolExpr := createBoolExpression(isTrue)
+		boolExpr := createBooleanExpression(isTrue)
 		conj = conj.Add(boolExpr)
 		accum = conj
 	}
