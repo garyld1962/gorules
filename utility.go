@@ -281,13 +281,16 @@ func getArrayPathAndKey(path string) (string, string) {
 	return strings.Join(s[0:lengt-1], "."), final
 }
 
-func ParseStringToJSONObject(jsonAsString string) map[string]interface{} {
+func parseStringToJSONObject(jsonAsString string) map[string]interface{} {
 	result, err := objects.NewMapFromJSON(jsonAsString)
 	if err != nil {
 		panic(err)
 	}
 	return result
 }
+
+// ParseStringToJSON is exposed to make testing easier
+var ParseStringToJSON = parseStringToJSONObject
 
 func startsWithIdentifier(toStartValue string) func(stringToCheck string) bool {
 	return func(stringToCheck string) bool {
@@ -323,8 +326,8 @@ func operandsAndOperatorBetween(delimiter string) func(input string) []string {
 	}
 }
 
-//StringBetweenSingleQuotes parses string between delimitter
-var StringBetweenSingleQuotes = stringBetween("'")
+//stringBetweenSingleQuotes parses string between delimitter
+var stringBetweenSingleQuotes = stringBetween("'")
 
 var parsedOperandsAndOperator = operandsAndOperatorBetween(" ")
 
@@ -337,6 +340,14 @@ func surroundBy(delimiter string) func(input string) string {
 var surroundBySingleQuotes = surroundBy("'")
 
 var surroundByPrecendenceMark = surroundBy("%%")
+
+func containString(delimiter string) func(input string) bool {
+	return func(input string) bool {
+		return strings.Contains(input, delimiter)
+	}
+}
+
+var containsSpace = containString(" ")
 
 func encodeSpace(input string) string {
 	return strings.Replace(input, " ", "!+!", -1)
@@ -396,25 +407,25 @@ func firstExpr(list []Expression) Expression {
 	return list[0]
 }
 
-func markPrecedence(input string) string {
-	return recursivePrecedenceMarker("", StringSlice(reverse(lines(input))))
-}
+// func markPrecedence(input string) string {
+// 	return recursivePrecedenceMarker("", StringSlice(reverse(lines(input))))
+// }
 
-func recursivePrecedenceMarker(accum string, input StringSlice) string {
+// func recursivePrecedenceMarker(accum string, input StringSlice) string {
 
-	if len(input) == 0 {
-		return accum
-	}
-	firstEle := input[0]
+// 	if len(input) == 0 {
+// 		return accum
+// 	}
+// 	firstEle := input[0]
 
-	if isConjunction(firstEle) {
-		// fmt.Println("1", input, firstEle, surroundByPrecendenceMark(firstEle))
-		return recursivePrecedenceMarker(concatStrings(accum, surroundByPrecendenceMark(firstEle), " "), input[1:])
-	} else if endsWithConjunction(firstEle) {
-		// fmt.Println("2", input, firstEle, makeLastWordFirst(firstEle))
-		return recursivePrecedenceMarker(concatStrings(accum, makeLastWordFirst(firstEle), " "), input[1:])
-	} else {
-		// fmt.Println("3", input, firstEle, firstEle)
-		return recursivePrecedenceMarker(concatStrings(accum, firstEle, " "), input[1:])
-	}
-}
+// 	if isConjunction(firstEle) {
+// 		// fmt.Println("1", input, firstEle, surroundByPrecendenceMark(firstEle))
+// 		return recursivePrecedenceMarker(concatStrings(accum, surroundByPrecendenceMark(firstEle), " "), input[1:])
+// 	} else if endsWithConjunction(firstEle) {
+// 		// fmt.Println("2", input, firstEle, makeLastWordFirst(firstEle))
+// 		return recursivePrecedenceMarker(concatStrings(accum, makeLastWordFirst(firstEle), " "), input[1:])
+// 	} else {
+// 		// fmt.Println("3", input, firstEle, firstEle)
+// 		return recursivePrecedenceMarker(concatStrings(accum, firstEle, " "), input[1:])
+// 	}
+// }

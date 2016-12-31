@@ -1,5 +1,7 @@
 package: gorules
-import: []
+import:
+- package: gopkg.in/gin-gonic/gin.v1
+- package: github.com/stretchr/signature
 testImport:
 - package: github.com/stretchr/stew
   subpackages:

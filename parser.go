@@ -1,7 +1,5 @@
 package gorules
 
-import "fmt"
-
 // RuleParser has to be implemented by anything that needs to be converted to a rule
 type RuleParser interface {
 	Parse(string, map[string]interface{}) Expression
@@ -22,7 +20,7 @@ var ParseDSL = ruleParserFunc(parseDSLToExpr)
 var ParseDSLWithPrecedence = ruleParserFunc(precedenceParser)
 
 func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {
-	fmt.Println("2", dslText)
+	// fmt.Println("2", dslText)
 	var ruleToEvaluate = Rule{}
 	var latestRuleStmt Expressionable
 	var toParse string

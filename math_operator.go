@@ -8,8 +8,11 @@ type MathOperator int
 const (
 	//Multiply two operands
 	Multiply MathOperator = iota
+	// Divide two operands
 	Divide
+	// Add two operands
 	Add
+	// Subtract two operands
 	Subtract
 	maxMathOperatorFlag
 )

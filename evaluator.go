@@ -2,12 +2,26 @@ package gorules
 
 import "fmt"
 
-func evaluator(parser ruleParserFunc) func(string, string) bool {
+// RuleEvaluator has to be implemented by anything that needs to be converted to a rule
+type RuleEvaluator interface {
+	Evaluate(string, map[string]interface{}) bool
+}
 
-	return func(dslText string, data string) bool {
-		rule := parser(dslText, parseStringToJSONObject(data))
-		fmt.Println("result", rule)
-		result, _ := rule.Evaluate()
+// ruleEvaluatorFunc is to enable any function to implemente RuleEvaluator interface
+type ruleEvaluatorFunc func(RuleFetcher, map[string]interface{}) bool
+
+// Parse Make any function that has RuleParserFunc type signature to become RuleParser
+func (fn ruleEvaluatorFunc) Evaluate(rule RuleFetcher, dataAsJSON map[string]interface{}) bool {
+	return fn(rule, dataAsJSON)
+}
+
+func evaluator(parser ruleParserFunc) func(RuleFetcher, map[string]interface{}) bool {
+
+	return func(rule RuleFetcher, data map[string]interface{}) bool {
+		ruleText := rule.Fetch()
+		ruleParsed := parser(ruleText, data)
+		result, _ := ruleParsed.Evaluate()
+		fmt.Println("result", rule, result)
 		return result
 	}
 }
@@ -15,4 +29,4 @@ func evaluator(parser ruleParserFunc) func(string, string) bool {
 // DSLEvaluator evaluates DSL to a bool with function ParseDSL
 var DSLEvaluator = evaluator(ParseDSL)
 
-var DSLEvaluatorWithP = evaluator(ParseDSLWithPrecedence)
+var EvaluateRules = ruleEvaluatorFunc(evaluator(ParseDSLWithPrecedence))

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var parserTestData = `{
+var parserTestDataString = `{
   "id": 25,
   "zip5": 33076,
   "zip3": 333,
@@ -47,6 +47,8 @@ var parserTestData = `{
   ],
   "promos": []
 }`
+
+var parserTestData = gorules.ParseStringToJSON(parserTestDataString)
 
 //IF THIS country NOTEQUALS USA |AND| NOTEQUALS CANADA |AND| zip3 EQUALS "333"
 // func TestValue(t *testing.T) {
