@@ -8,18 +8,17 @@ type RuleEvaluator interface {
 }
 
 // ruleEvaluatorFunc is to enable any function to implemente RuleEvaluator interface
-type ruleEvaluatorFunc func(RuleFetcher, map[string]interface{}) bool
+type ruleEvaluatorFunc func(string, map[string]interface{}) bool
 
 // Parse Make any function that has RuleParserFunc type signature to become RuleParser
-func (fn ruleEvaluatorFunc) Evaluate(rule RuleFetcher, dataAsJSON map[string]interface{}) bool {
+func (fn ruleEvaluatorFunc) Evaluate(rule string, dataAsJSON map[string]interface{}) bool {
 	return fn(rule, dataAsJSON)
 }
 
-func evaluator(parser ruleParserFunc) func(RuleFetcher, map[string]interface{}) bool {
+func evaluator(parser ruleParserFunc) func(string, map[string]interface{}) bool {
 
-	return func(rule RuleFetcher, data map[string]interface{}) bool {
-		ruleText := rule.Fetch()
-		ruleParsed := parser(ruleText, data)
+	return func(rule string, data map[string]interface{}) bool {
+		ruleParsed := parser(rule, data)
 		result, _ := ruleParsed.Evaluate()
 		fmt.Println("result", rule, result)
 		return result

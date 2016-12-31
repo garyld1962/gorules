@@ -20,9 +20,11 @@ func main() {
 	router.POST("/rules", func(c *gin.Context) {
 		var json Message
 		if c.BindJSON(&json) == nil {
-			result := R.EvaluateRules(R.NewRuleFetcher(json.Rule.(string)), json.Data)
+			result := R.NewRuleFetcher(json.Rule).Process(json.Data)
 			c.JSON(http.StatusOK, gin.H{"status": result})
 		}
+
+		c.JSON(http.StatusOK, gin.H{"status": "Invalid data"})
 	})
 
 	router.GET("/status", func(c *gin.Context) {

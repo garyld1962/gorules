@@ -137,7 +137,7 @@ func TestWithPrecedence(t *testing.T) {
 
 func TestWithPrecedenceOne(t *testing.T) {
 	var testStringSlice = `country IsEqualTo 'CANADA'
-					   	   AND 	
+					   	   AND
 					   	   country IsEqualTo 'CANADA'
 					   	   OR 
 					       state IsEqualTo 'L'`

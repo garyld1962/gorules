@@ -29,10 +29,10 @@ func NewStringSlice(stringArray []string) StringSlice {
 // 	return vsf
 // }
 
-// func (s StringSlice) Map(f func(string) string) StringSlice {
-// 	vsm := make([]string, len(s))
-// 	for i, v := range s {
-// 		vsm[i] = f(v)
-// 	}
-// 	return StringSlice(vsm)
-// }
+func (s StringSlice) Map(f func(string) string) StringSlice {
+	vsm := make([]string, len(s))
+	for i, v := range s {
+		vsm[i] = f(v)
+	}
+	return StringSlice(vsm)
+}
