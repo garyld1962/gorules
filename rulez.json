@@ -1,0 +1,4 @@
+{
+    "is-country-canada": "country IsEqualTo 'CANADA'",
+    "is-country-USA": "country IsEqualTo 'USA'"
+}
