@@ -19,7 +19,7 @@ type Constant struct {
 // Evaluate returns the string from the Constant
 func (c Constant) Evaluate(_ interface{}) (string, error) {
 	if startsWithSingleQuotes(c.value) {
-		return StringBetweenSingleQuotes(c.value), nil
+		return stringBetweenSingleQuotes(c.value), nil
 	}
 	return "", errors.New("Not a Constant")
 }

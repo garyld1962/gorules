@@ -10,7 +10,7 @@ import (
 
 //var eval = gorules.ValueExpressionEvaluator{}
 
-var evaluatorTestData = `{
+var evaluatorTestDataString = `{
   "id": 25,
   "zip5": 33076,
   "zip3": 333,
@@ -50,6 +50,8 @@ var evaluatorTestData = `{
   ],
   "promos": []
 }`
+
+var evaluatorTestData = gorules.ParseStringToJSON(evaluatorTestDataString)
 
 // func TestSingleLineDSL(t *testing.T) {
 // 	result := gorules.DSLEvaluator("country IsEqualTo USA", evaluatorTestData)
@@ -128,7 +130,7 @@ func TestWithPrecedence(t *testing.T) {
 					   	   country IsEqualTo 'CANADA' AND
 					        country IsEqualTo 'CANADA' AND
 					   		 state IsEqualTo 'L'`
-	result := gorules.DSLEvaluatorWithP(testStringSlice, evaluatorTestData)
+	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
 	fmt.Println(result)
 	assert.False(t, false)
 }
@@ -139,7 +141,7 @@ func TestWithPrecedenceOne(t *testing.T) {
 					   	   country IsEqualTo 'CANADA'
 					   	   OR 
 					       state IsEqualTo 'L'`
-	result := gorules.DSLEvaluatorWithP(testStringSlice, evaluatorTestData)
+	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
 	fmt.Println(result)
 	assert.False(t, false)
 }

@@ -30,7 +30,7 @@ func reduceExpressions(accum Expression, expressions []Expression) bool {
 		value, _ := accum.Evaluate()
 		if isConjunctionExpression(accum) {
 			for _, x := range accum.(ConjunctionExpression).Expressions {
-				fmt.Println("INI Expressions", x)
+				fmt.Println("Expressions", x)
 			}
 		}
 
@@ -39,12 +39,7 @@ func reduceExpressions(accum Expression, expressions []Expression) bool {
 	}
 
 	expr := firstExpr(expressions)
-	// ok := isRule(expr)
 
-	// if ok {
-	// 	newExp := expr.(Rule)
-	// 	expr = (newExp.expressions[0])
-	// }
 	fmt.Println("----------------------------------------------")
 	fmt.Println("reduceExpressions- Starts", expr)
 	fmt.Println("reduceExpressions-accum At START", accum)
