@@ -1,7 +1,6 @@
 package gorules_test
 
 import (
-	"fmt"
 	"gorules"
 	"testing"
 
@@ -13,7 +12,7 @@ import (
 var evaluatorTestDataString = `{
   "id": 25,
   "zip5": 33076,
-  "zip3": 333,
+  "zip3": "333",
   "state": "FL",
   "country": "SOUTH A",
   "subtotal": "25.00",
@@ -76,74 +75,79 @@ var evaluatorTestData = gorules.ParseStringToJSON(evaluatorTestDataString)
 // 						 country IsEqualTo 'SOUTH A' OR
 // 					   	   country IsEqualTo 'USA' AND
 // 					   	     country IsEqualTo 'SOUTH A'
-var testStringSlice = `country IsEqualTo 'CANADA'
-					   AND 	
-					   country IsEqualTo 'CANADA'
-					   OR 
-					   state IsEqualTo 'L'`
+// var testStringSlice = `country IsEqualTo 'CANADA'
+// 					   AND
+// 					   country IsEqualTo 'CANADA'
+// 					   OR
+// 					   state IsEqualTo 'L'`
 
-//    state IsEqualTo 'FL' AND
+// //    state IsEqualTo 'FL' AND
 
-func TestCompareValueAndPath(t *testing.T) {
-	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo country", evaluatorTestData)
+// func TestCompareValueAndPath(t *testing.T) {
+// 	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo country", evaluatorTestData)
+// 	assert.True(t, result)
+// }
+
+// func TestComparePathAndValue(t *testing.T) {
+// 	result := gorules.DSLEvaluator("country IsEqualTo 'SOUTH A'", evaluatorTestData)
+// 	assert.True(t, result)
+// }
+
+// func TestComparePathAndPath(t *testing.T) {
+// 	result := gorules.DSLEvaluator("country IsEqualTo country AND country IsEqualTo country", evaluatorTestData)
+// 	assert.True(t, result)
+// }
+
+// func TestAllSelectorPass(t *testing.T) {
+// 	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo '11'", evaluatorTestData)
+// 	assert.True(t, result)
+// }
+
+// func TestAllSelectorFail(t *testing.T) {
+// 	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo '0'", evaluatorTestData)
+// 	assert.False(t, result)
+// }
+
+// func TestAnySelectorPass(t *testing.T) {
+// 	result := gorules.DSLEvaluator("ANY orderItems.availableInventory IsEqualTo 'NC'", evaluatorTestData)
+// 	assert.True(t, result)
+// }
+
+// func TestAnySelectorFail(t *testing.T) {
+// 	result := gorules.DSLEvaluator("ANY orderItems.weight IsEqualTo 'NV'", evaluatorTestData)
+// 	assert.False(t, result)
+// }
+
+// func TestSingleConjunction(t *testing.T) {
+// 	result := gorules.DSLEvaluator("OR", evaluatorTestData)
+// 	assert.False(t, result)
+// }
+
+// func TestWithPrecedence(t *testing.T) {
+// 	var testStringSlice = `country IsEqualTo 'CANADA'
+// 					  	   AND
+// 					   	   country IsEqualTo 'CANADA' AND
+// 					        country IsEqualTo 'CANADA' AND
+// 					   		 state IsEqualTo 'L'`
+// 	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
+// 	fmt.Println(result)
+// 	assert.False(t, false)
+// }
+
+// func TestWithPrecedenceOne(t *testing.T) {
+// 	var testStringSlice = `country IsEqualTo 'CANADA'
+// 					   	   AND
+// 					   	   country IsEqualTo 'CANADA'
+// 					   	   OR
+// 					       state IsEqualTo 'L'`
+// 	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
+// 	fmt.Println(result)
+// 	assert.False(t, false)
+// }
+
+func TestMaths(t *testing.T) {
+	result := gorules.EvaluateRules("'353' IsEqualTo |ADD zip3 '20'|", evaluatorTestData)
 	assert.True(t, result)
-}
-
-func TestComparePathAndValue(t *testing.T) {
-	result := gorules.DSLEvaluator("country IsEqualTo 'SOUTH A'", evaluatorTestData)
-	assert.True(t, result)
-}
-
-func TestComparePathAndPath(t *testing.T) {
-	result := gorules.DSLEvaluator("country IsEqualTo country AND country IsEqualTo country", evaluatorTestData)
-	assert.True(t, result)
-}
-
-func TestAllSelectorPass(t *testing.T) {
-	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo '11'", evaluatorTestData)
-	assert.True(t, result)
-}
-
-func TestAllSelectorFail(t *testing.T) {
-	result := gorules.DSLEvaluator("ALL orderItems.weight IsEqualTo '0'", evaluatorTestData)
-	assert.False(t, result)
-}
-
-func TestAnySelectorPass(t *testing.T) {
-	result := gorules.DSLEvaluator("ANY orderItems.availableInventory IsEqualTo 'NC'", evaluatorTestData)
-	assert.True(t, result)
-}
-
-func TestAnySelectorFail(t *testing.T) {
-	result := gorules.DSLEvaluator("ANY orderItems.weight IsEqualTo 'NV'", evaluatorTestData)
-	assert.False(t, result)
-}
-
-func TestSingleConjunction(t *testing.T) {
-	result := gorules.DSLEvaluator("OR", evaluatorTestData)
-	assert.False(t, result)
-}
-
-func TestWithPrecedence(t *testing.T) {
-	var testStringSlice = `country IsEqualTo 'CANADA'
-					  	   AND 	
-					   	   country IsEqualTo 'CANADA' AND
-					        country IsEqualTo 'CANADA' AND
-					   		 state IsEqualTo 'L'`
-	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
-	fmt.Println(result)
-	assert.False(t, false)
-}
-
-func TestWithPrecedenceOne(t *testing.T) {
-	var testStringSlice = `country IsEqualTo 'CANADA'
-					   	   AND
-					   	   country IsEqualTo 'CANADA'
-					   	   OR 
-					       state IsEqualTo 'L'`
-	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
-	fmt.Println(result)
-	assert.False(t, false)
 }
 
 /*

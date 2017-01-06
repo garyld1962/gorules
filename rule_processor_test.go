@@ -53,20 +53,20 @@ var fetcherTestDataString = `{
 var fetcherTestData = gorules.ParseStringToJSON(fetcherTestDataString)
 
 func TestFetchFromFile(t *testing.T) {
-	n := gorules.NewRuleFetcher("is-country-canada").(gorules.RuleFromFile).Fetch()
+	n := gorules.NewRuleProcessor("is-country-canada").(gorules.RuleFromFile).Fetch()
 	assert.Equal(t, "country IsEqualTo 'CANADA'", n)
 }
 
 func TestFetchFromRuleCollection(t *testing.T) {
 	rules := []string{"country IsEqualTo 'USA'", "is-country-canada"}
-	n := gorules.NewRuleFetcher(rules).(gorules.RuleCollection).Process(fetcherTestData)
+	n := gorules.NewRuleProcessor(rules).(gorules.RuleCollection).Process(fetcherTestData)
 	fmt.Println(n)
 	assert.True(t, true)
 }
 
 func TestFetchFromObjectCollection(t *testing.T) {
 	rules := map[string]string{"is-country-usa": "country IsEqualTo 'USA'", "is-country-canada": "is-country-canada"}
-	n := gorules.NewRuleFetcher(rules).(gorules.RuleObjectCollection).Process(fetcherTestData)
+	n := gorules.NewRuleProcessor(rules).(gorules.RuleObjectCollection).Process(fetcherTestData)
 	fmt.Println(n)
 	assert.True(t, true)
 }

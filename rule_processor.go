@@ -61,7 +61,7 @@ func (rt RuleCollection) Fetch() []RuleProcessor {
 	ruleCollection := make([]RuleProcessor, 0)
 	for _, toProcess := range rt {
 		fmt.Println(toProcess, len(rt))
-		ruleCollection = append(ruleCollection, NewRuleFetcher(toProcess))
+		ruleCollection = append(ruleCollection, NewRuleProcessor(toProcess))
 	}
 	fmt.Println(ruleCollection, len(rt))
 
@@ -91,7 +91,7 @@ func (rt RuleObjectCollection) Fetch() map[string]RuleProcessor {
 	var ruleCollection = make(map[string]RuleProcessor)
 
 	for k, v := range rt {
-		ruleCollection[k] = NewRuleFetcher(v)
+		ruleCollection[k] = NewRuleProcessor(v)
 	}
 
 	fmt.Println(ruleCollection, len(rt))
@@ -117,8 +117,8 @@ func NewRuleObjectCollection(rule map[string]string) RuleProcessor {
 	return RuleObjectCollection(rule)
 }
 
-// NewRuleFetcher creates a RuleFetcher depending on the input string given
-func NewRuleFetcher(input interface{}) RuleProcessor {
+// NewRuleProcessor creates a RuleFetcher depending on the input string given
+func NewRuleProcessor(input interface{}) RuleProcessor {
 	_, ok := input.(map[string]string)
 	if isArray(input) {
 		fmt.Println(input, isArray(input), len(input.([]string)))

@@ -2,6 +2,7 @@ package gorules
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -57,8 +58,13 @@ func NewPath(value string) Path {
 
 // NewValue used to create any of the value type
 func NewValue(value string) Value {
+
 	if startsWithSingleQuotes(value) {
+		fmt.Println("1", value)
 		return NewConstant(value)
+	} else if startsWithPipe(value) {
+		fmt.Println("2", value)
+		return NewMathExpression(decodeSpace(stringBetweenPipe(value)))
 	}
 	return NewPath(value)
 }
@@ -72,15 +78,16 @@ type MathExpression struct {
 
 //NewMathExpression is a wrapper around MathExpression
 func NewMathExpression(expression string) MathExpression {
+	fmt.Println("ME", expression)
 	parsedOperandsAndOperatorValue := parsedOperandsAndOperator(expression)
-	multiplicationOperator, _ := toMathOperator(parsedOperandsAndOperatorValue[1])
-	return MathExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue[0])), operand2: NewValue(trim(parsedOperandsAndOperatorValue[2])), operator: multiplicationOperator}
+	multiplicationOperator, _ := toMathOperator(parsedOperandsAndOperatorValue[0])
+	return MathExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue[1])), operand2: NewValue(trim(parsedOperandsAndOperatorValue[2])), operator: multiplicationOperator}
 }
 
 // Evaluate works out the expression and returns the result as a string
-func (m MathExpression) Evaluate(_ interface{}) (string, error) {
-	operand1, _ := m.operand1.Evaluate(make([]interface{}, 0))
-	operand2, _ := m.operand2.Evaluate(make([]interface{}, 0))
+func (m MathExpression) Evaluate(data interface{}) (string, error) {
+	operand1, _ := m.operand1.Evaluate(data)
+	operand2, _ := m.operand2.Evaluate(data)
 	firstOperand, _ := strconv.Atoi(operand1)
 	secondOperand, _ := strconv.Atoi(operand2)
 	mathOperatorFunc := mathOperatorFuncList[m.operator]

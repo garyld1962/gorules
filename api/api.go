@@ -20,7 +20,7 @@ func main() {
 	router.POST("/rules", func(c *gin.Context) {
 		var json Message
 		if c.BindJSON(&json) == nil {
-			result := R.NewRuleFetcher(json.Rule).Process(json.Data)
+			result := R.NewRuleProcessor(json.Rule).Process(json.Data)
 			c.JSON(http.StatusOK, gin.H{"status": result})
 		}
 

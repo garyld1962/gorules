@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"fmt"
+
 	"github.com/stretchr/stew/objects"
 )
 
@@ -308,6 +310,8 @@ func hasOperatorBetween(operator string, input string) bool {
 
 var startsWithSingleQuotes = startsWithIdentifier("'")
 
+var startsWithPipe = startsWithIdentifier("|")
+
 func stringBetween(delimiter string) func(input string) string {
 	return func(input string) string {
 		if !hasStringBetween(delimiter, input) {
@@ -328,6 +332,8 @@ func operandsAndOperatorBetween(delimiter string) func(input string) []string {
 
 //stringBetweenSingleQuotes parses string between delimitter
 var stringBetweenSingleQuotes = stringBetween("'")
+
+var stringBetweenPipe = stringBetween("|")
 
 var parsedOperandsAndOperator = operandsAndOperatorBetween(" ")
 
@@ -358,8 +364,32 @@ func decodeSpace(input string) string {
 }
 
 func encodeString(input string) string {
-	return recursiveSpaceEncode("", input)
+	x := recursiveEncodeWithPipe("", recursiveEncodeWithQuotes("", input))
+	fmt.Println("ES", recursiveEncodeWithQuotes("", input), x)
+	return x
 }
+
+func recursiveEncodeWith(delimiter string) func(string, string) string {
+	return func(accum, input string) string {
+		v := strings.Count(input, delimiter)
+		if v == 0 {
+			return accum + input
+		}
+
+		arr := strings.SplitN(input, delimiter, 2)
+		current := arr[0]
+		remaining := arr[1]
+		if v%2 != 0 {
+			current = surroundBy(delimiter)(encodeSpace(current))
+		}
+		return recursiveEncodeWith(delimiter)(accum+current, remaining)
+	}
+
+}
+
+var recursiveEncodeWithQuotes = recursiveEncodeWith("'")
+var recursiveEncodeWithPipe = recursiveEncodeWith("|")
+var RRecursiveEncodeWithPipe = recursiveEncodeWith("|")
 
 func recursiveSpaceEncode(accum, input string) string {
 	v := strings.Count(input, "'")
