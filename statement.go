@@ -1,5 +1,7 @@
 package gorules
 
+import "fmt"
+
 //Expressionable is the abstraction of any structure that can be converted to Expression
 type Expressionable interface {
 	ToExpression(interface{}) (Expression, error)
@@ -29,18 +31,20 @@ func (r RuleStatement) ToExpression(data interface{}) (Expression, error) {
 func createRuleStmt(input string) RuleStatement {
 
 	parsed := StringSlice(reverse(spiltWithSpace(encodeString(input))))
-
+	fmt.Println("createRuleStmt", input, parsed, encodeString(input), NewValue(parsed.getOrEmpty(0)))
 	ruleStmt := RuleStatement{
 		Target:   NewValue(parsed.getOrEmpty(0)),
 		Source:   NewValue(parsed.getOrDefault(2, "data")),
 		Operator: parsed.getOrEmpty(1),
 		Selector: parsed.getOrDefault(3, "THIS"),
 		Branch:   parsed.getOrDefault(4, "IF")}
+	fmt.Println("ruleStmt", ruleStmt)
 	return ruleStmt
 }
 
 // createRuleStmtFromExisting creates a RuleStatement and fills the missing values from the existingRule provided
 func createRuleStmtFromExisting(existingRule Expressionable, input string) RuleStatement {
+
 	parsed := StringSlice(reverse(spiltWithSpace(encodeString(input))))
 	var rule RuleStatement
 	if existingRule != nil {
@@ -55,6 +59,7 @@ func createRuleStmtFromExisting(existingRule Expressionable, input string) RuleS
 	} else {
 		rule = createRuleStmt(input)
 	}
+	fmt.Println("rule", rule)
 	return rule
 }
 

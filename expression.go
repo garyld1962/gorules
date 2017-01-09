@@ -1,5 +1,7 @@
 package gorules
 
+import "fmt"
+
 // Expression refers to anytype that can be evaluated
 type Expression interface {
 	Evaluate() (bool, error)
@@ -16,7 +18,7 @@ type RuleExpression struct {
 func (v RuleExpression) Evaluate() (bool, error) {
 	operatorFunc := operatorFuncList[v.Operator]
 	result, err := operatorFunc(v.Value, v.Target)
-	// fmt.Println("Evaluate", v, result)
+	fmt.Println("Evaluate", v, result)
 	return result, err
 }
 
@@ -37,10 +39,10 @@ func createRuleExpressionWithTarget(operatorText string, value string, target st
 }
 
 func createRuleExpressionFromRuleStmt(rule RuleStatement, data map[string]interface{}) Expression {
-	// fmt.Println("source", rule)
+
+	// fmt.Println("target", rule.Source, rule.Target.Evaluate(data))
 	source, _ := rule.Source.Evaluate(data)
 	target, _ := rule.Target.Evaluate(data)
-
 	return createRuleExpressionWithTarget(rule.Operator, decodeSpace(source), decodeSpace(target))
 }
 

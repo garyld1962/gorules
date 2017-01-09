@@ -18,10 +18,10 @@ const (
 )
 
 var mathOperatorNames = [...]string{
-	Multiply: "*",
-	Divide:   "/",
-	Add:      "+",
-	Subtract: "-",
+	Multiply: "MUL",
+	Divide:   "DIV",
+	Add:      "ADD",
+	Subtract: "SUB",
 }
 
 // String makes MathOperator implement Stringer
