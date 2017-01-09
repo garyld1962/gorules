@@ -17,7 +17,7 @@ const (
 	maxMathOperatorFlag
 )
 
-var mathOperatorNames = [...]string{
+var mathOperatorNames = map[MathOperator]string{
 	Multiply: "MUL",
 	Divide:   "DIV",
 	Add:      "ADD",
@@ -50,6 +50,15 @@ func isMathOperator(value string) bool {
 		return true
 	}
 	return false
+}
+
+// MathOperatorList returns the Operators
+func MathOperatorList() []string {
+	operatorArray := make([]string, 0)
+	for _, r := range mathOperatorNames {
+		operatorArray = append(operatorArray, r)
+	}
+	return operatorArray
 }
 
 type mathOperatorFunc func(int, int) (int, error)

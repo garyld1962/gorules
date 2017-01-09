@@ -89,3 +89,9 @@ func TestAdditionSeparationByOperator(t *testing.T) {
 	outputValue, _ := newMathExpression.Evaluate("Dummy Data")
 	assert.Equal(t, "42", outputValue)
 }
+
+func TestMathOperatorList(t *testing.T) {
+	operators := gorules.MathOperatorList()
+	fmt.Println("op", operators)
+	assert.Equal(t, 4, len(operators))
+}

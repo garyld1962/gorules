@@ -31,5 +31,15 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"status": "Service running"})
 	})
 
+	router.GET("/operators/math", func(c *gin.Context) {
+		operators := R.MathOperatorList()
+		c.JSON(http.StatusOK, gin.H{"operators": operators})
+	})
+
+	router.GET("/operators/string", func(c *gin.Context) {
+		operators := R.StringOperatorList()
+		c.JSON(http.StatusOK, gin.H{"operators": operators})
+	})
+
 	router.Run(":8080")
 }

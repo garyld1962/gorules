@@ -42,6 +42,15 @@ func isStringOperator(value string) bool {
 	return false
 }
 
+// StringOperatorList returns the Operators
+func StringOperatorList() []string {
+	operatorArray := make([]string, 0)
+	for _, r := range stringOperatorNames {
+		operatorArray = append(operatorArray, r)
+	}
+	return operatorArray
+}
+
 type stringOperatorFunc func(string, string) (string, error)
 
 var stringOperatorFuncList = map[StringOperator]stringOperatorFunc{
