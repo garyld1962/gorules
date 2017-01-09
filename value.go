@@ -2,7 +2,6 @@ package gorules
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -60,11 +59,14 @@ func NewPath(value string) Path {
 func NewValue(value string) Value {
 
 	if startsWithSingleQuotes(value) {
-		fmt.Println("1", value)
 		return NewConstant(value)
 	} else if startsWithPipe(value) {
-		fmt.Println("2", value)
-		return NewMathExpression(decodeSpace(stringBetweenPipe(value)))
+		x := spiltWithSpace(stringBetweenPipe(value))[0]
+		if isMathOperator(x) {
+			return NewMathExpression(decodeSpace(stringBetweenPipe(value)))
+		}
+
+		return NewStringExpression(decodeSpace(stringBetweenPipe(value)))
 	}
 	return NewPath(value)
 }
@@ -78,7 +80,6 @@ type MathExpression struct {
 
 //NewMathExpression is a wrapper around MathExpression
 func NewMathExpression(expression string) MathExpression {
-	fmt.Println("ME", expression)
 	parsedOperandsAndOperatorValue := parsedOperandsAndOperator(expression)
 	multiplicationOperator, _ := toMathOperator(parsedOperandsAndOperatorValue[0])
 	return MathExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue[1])), operand2: NewValue(trim(parsedOperandsAndOperatorValue[2])), operator: multiplicationOperator}
@@ -98,4 +99,32 @@ func (m MathExpression) Evaluate(data interface{}) (string, error) {
 func (m MathExpression) String() string {
 	dummyValue, _ := m.operand1.Evaluate(make([]interface{}, 0))
 	return dummyValue
+}
+
+// StringExpression is used to evaluate strings expressions on json values
+type StringExpression struct {
+	operand1 Value
+	operand2 Value
+	operator StringOperator
+}
+
+//NewStringExpression is a wrapper around StringExpression
+func NewStringExpression(expression string) StringExpression {
+	parsedOperandsAndOperatorValue := parsedOperandsAndOperator(expression)
+	stringOperator, _ := toStringOperator(parsedOperandsAndOperatorValue[0])
+	return StringExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue[1])), operand2: NewValue(trim(parsedOperandsAndOperatorValue[2])), operator: stringOperator}
+}
+
+func (m StringExpression) String() string {
+	dummyValue, _ := m.operand1.Evaluate(make([]interface{}, 0))
+	return dummyValue
+}
+
+// Evaluate works out the expression and returns the result as a string
+func (m StringExpression) Evaluate(data interface{}) (string, error) {
+	operand1, _ := m.operand1.Evaluate(data)
+	operand2, _ := m.operand2.Evaluate(data)
+	stringOperatorFunc := stringOperatorFuncList[m.operator]
+	result, err := stringOperatorFunc(operand1, operand2)
+	return result, err
 }

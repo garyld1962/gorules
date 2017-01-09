@@ -146,7 +146,7 @@ var evaluatorTestData = gorules.ParseStringToJSON(evaluatorTestDataString)
 // }
 
 func TestMaths(t *testing.T) {
-	result := gorules.EvaluateRules("'353' IsEqualTo |ADD zip3 '20'|", evaluatorTestData)
+	result := gorules.EvaluateRules("'SOUTH' IsEqualTo |TAKETILL '-' 'SOTH-'|", evaluatorTestData)
 	assert.True(t, result)
 }
 
