@@ -2,6 +2,7 @@ package gorules
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -82,6 +83,7 @@ type MathExpression struct {
 func NewMathExpression(expression string) MathExpression {
 	parsedOperandsAndOperatorValue := parsedOperandsAndOperator(expression)
 	multiplicationOperator, _ := toMathOperator(parsedOperandsAndOperatorValue[0])
+	fmt.Println("NME", multiplicationOperator)
 	return MathExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue[1])), operand2: NewValue(trim(parsedOperandsAndOperatorValue[2])), operator: multiplicationOperator}
 }
 

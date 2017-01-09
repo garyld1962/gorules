@@ -67,7 +67,7 @@ func TestPath(t *testing.T) {
 }
 
 func TestMultiplicationSeparationByOperator(t *testing.T) {
-	inputString := "'6' * '6'"
+	inputString := "MUL '6' '6'"
 	newMathExpression := gorules.NewMathExpression(inputString)
 	fmt.Println(newMathExpression)
 	outputValue, _ := newMathExpression.Evaluate("Dummy Data")
@@ -75,7 +75,7 @@ func TestMultiplicationSeparationByOperator(t *testing.T) {
 }
 
 func TestDivisionSeparationByOperator(t *testing.T) {
-	inputString := "'120' / '6'"
+	inputString := "DIV '120' '6'"
 	newMathExpression := gorules.NewMathExpression(inputString)
 	fmt.Println(newMathExpression)
 	outputValue, _ := newMathExpression.Evaluate("Dummy Data")
@@ -83,7 +83,7 @@ func TestDivisionSeparationByOperator(t *testing.T) {
 }
 
 func TestAdditionSeparationByOperator(t *testing.T) {
-	inputString := "'16' + '26'"
+	inputString := "ADD '16' '26'"
 	newMathExpression := gorules.NewMathExpression(inputString)
 	fmt.Println(newMathExpression)
 	outputValue, _ := newMathExpression.Evaluate("Dummy Data")
