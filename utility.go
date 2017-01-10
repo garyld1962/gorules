@@ -436,26 +436,3 @@ func first(list []string) string {
 func firstExpr(list []Expression) Expression {
 	return list[0]
 }
-
-// func markPrecedence(input string) string {
-// 	return recursivePrecedenceMarker("", StringSlice(reverse(lines(input))))
-// }
-
-// func recursivePrecedenceMarker(accum string, input StringSlice) string {
-
-// 	if len(input) == 0 {
-// 		return accum
-// 	}
-// 	firstEle := input[0]
-
-// 	if isConjunction(firstEle) {
-// 		// fmt.Println("1", input, firstEle, surroundByPrecendenceMark(firstEle))
-// 		return recursivePrecedenceMarker(concatStrings(accum, surroundByPrecendenceMark(firstEle), " "), input[1:])
-// 	} else if endsWithConjunction(firstEle) {
-// 		// fmt.Println("2", input, firstEle, makeLastWordFirst(firstEle))
-// 		return recursivePrecedenceMarker(concatStrings(accum, makeLastWordFirst(firstEle), " "), input[1:])
-// 	} else {
-// 		// fmt.Println("3", input, firstEle, firstEle)
-// 		return recursivePrecedenceMarker(concatStrings(accum, firstEle, " "), input[1:])
-// 	}
-// }

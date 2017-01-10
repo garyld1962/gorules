@@ -95,3 +95,17 @@ func TestMathOperatorList(t *testing.T) {
 	fmt.Println("op", operators)
 	assert.Equal(t, 4, len(operators))
 }
+
+func TestToUpperStringExpression(t *testing.T) {
+	inputString := "|TOUPPER 'test'|"
+	newMathExpression, _ := gorules.NewValue(inputString).Evaluate("Dummy Data")
+	fmt.Println(newMathExpression)
+	assert.Equal(t, "TEST", newMathExpression)
+}
+
+func TestToLowerStringExpression(t *testing.T) {
+	inputString := "|TOLOWER 'TEST'|"
+	newMathExpression, _ := gorules.NewValue(inputString).Evaluate("Dummy Data")
+	fmt.Println(newMathExpression)
+	assert.Equal(t, "test", newMathExpression)
+}

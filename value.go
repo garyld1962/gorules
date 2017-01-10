@@ -17,6 +17,9 @@ type Constant struct {
 	value string
 }
 
+// EmptyConstant is the string form of empty Constant value
+var EmptyConstant = "''"
+
 // Evaluate returns the string from the Constant
 func (c Constant) Evaluate(_ interface{}) (string, error) {
 	if startsWithSingleQuotes(c.value) {
@@ -83,7 +86,6 @@ type MathExpression struct {
 func NewMathExpression(expression string) MathExpression {
 	parsedOperandsAndOperatorValue := parsedOperandsAndOperator(expression)
 	multiplicationOperator, _ := toMathOperator(parsedOperandsAndOperatorValue[0])
-	fmt.Println("NME", multiplicationOperator)
 	return MathExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue[1])), operand2: NewValue(trim(parsedOperandsAndOperatorValue[2])), operator: multiplicationOperator}
 }
 
@@ -112,9 +114,12 @@ type StringExpression struct {
 
 //NewStringExpression is a wrapper around StringExpression
 func NewStringExpression(expression string) StringExpression {
-	parsedOperandsAndOperatorValue := parsedOperandsAndOperator(expression)
-	stringOperator, _ := toStringOperator(parsedOperandsAndOperatorValue[0])
-	return StringExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue[1])), operand2: NewValue(trim(parsedOperandsAndOperatorValue[2])), operator: stringOperator}
+	parsedOperandsAndOperatorValue := StringSlice(spiltWithSpace(expression))
+	fmt.Println(expression, parsedOperandsAndOperatorValue)
+	stringOperator, _ := toStringOperator(parsedOperandsAndOperatorValue.getOrEmpty(0))
+	return StringExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue.getOrDefault(1, EmptyConstant))),
+		operand2: NewValue(trim(parsedOperandsAndOperatorValue.getOrDefault(2, EmptyConstant))),
+		operator: stringOperator}
 }
 
 func (m StringExpression) String() string {
@@ -126,6 +131,7 @@ func (m StringExpression) String() string {
 func (m StringExpression) Evaluate(data interface{}) (string, error) {
 	operand1, _ := m.operand1.Evaluate(data)
 	operand2, _ := m.operand2.Evaluate(data)
+	fmt.Println(operand1, "re", operand2)
 	stringOperatorFunc := stringOperatorFuncList[m.operator]
 	result, err := stringOperatorFunc(operand1, operand2)
 	return result, err

@@ -8,11 +8,17 @@ type StringOperator int
 const (
 	//TakeTill two operands
 	TakeTill StringOperator = iota
+	//ToUpper makes the string to uppercase
+	ToUpper
+	//ToLower makes the string to lowercase
+	ToLower
 	maxStringOperatorFlag
 )
 
 var stringOperatorNames = [...]string{
 	TakeTill: "TAKETILL",
+	ToUpper:  "TOUPPER",
+	ToLower:  "TOLOWER",
 }
 
 // String makes MathOperator implement Stringer
@@ -55,4 +61,6 @@ type stringOperatorFunc func(string, string) (string, error)
 
 var stringOperatorFuncList = map[StringOperator]stringOperatorFunc{
 	TakeTill: takeTill,
+	ToUpper:  toUpper,
+	ToLower:  toLower,
 }
