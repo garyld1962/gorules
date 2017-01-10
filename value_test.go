@@ -54,7 +54,6 @@ func TestConstants(t *testing.T) {
 	result := gorules.NewValue("'25'")
 	str, _ := result.Evaluate(make([]interface{}, 0))
 	fmt.Println(result, str)
-	//fmt.Println(valueTestData)
 	assert.Equal(t, "25", str)
 }
 
@@ -62,7 +61,6 @@ func TestPath(t *testing.T) {
 	result := gorules.NewValue("country")
 	str, _ := result.Evaluate(gorules.ParseStringToJSON(valueTestData))
 	fmt.Println(result, str)
-	//fmt.Println(valueTestData)
 	assert.Equal(t, "SOUTH", str)
 }
 
@@ -89,11 +87,18 @@ func TestAdditionSeparationByOperator(t *testing.T) {
 	outputValue, _ := newMathExpression.Evaluate("Dummy Data")
 	assert.Equal(t, "42", outputValue)
 }
+func TestSquare(t *testing.T) {
+	inputString := "SQUARE '16'"
+	newMathExpression := gorules.NewMathExpression(inputString)
+	fmt.Println(newMathExpression)
+	outputValue, _ := newMathExpression.Evaluate("Dummy Data")
+	assert.Equal(t, "256", outputValue)
+}
 
 func TestMathOperatorList(t *testing.T) {
 	operators := gorules.MathOperatorList()
 	fmt.Println("op", operators)
-	assert.Equal(t, 4, len(operators))
+	assert.Equal(t, 5, len(operators))
 }
 
 func TestToUpperStringExpression(t *testing.T) {

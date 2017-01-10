@@ -14,6 +14,8 @@ const (
 	Add
 	// Subtract two operands
 	Subtract
+	// Square a number
+	Square
 	maxMathOperatorFlag
 )
 
@@ -22,6 +24,7 @@ var mathOperatorNames = map[MathOperator]string{
 	Divide:   "DIV",
 	Add:      "ADD",
 	Subtract: "SUB",
+	Square:   "SQUARE",
 }
 
 // String makes MathOperator implement Stringer
@@ -68,4 +71,5 @@ var mathOperatorFuncList = map[MathOperator]mathOperatorFunc{
 	Divide:   divide,
 	Add:      add,
 	Subtract: subtract,
+	Square:   square,
 }

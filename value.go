@@ -84,9 +84,11 @@ type MathExpression struct {
 
 //NewMathExpression is a wrapper around MathExpression
 func NewMathExpression(expression string) MathExpression {
-	parsedOperandsAndOperatorValue := parsedOperandsAndOperator(expression)
-	multiplicationOperator, _ := toMathOperator(parsedOperandsAndOperatorValue[0])
-	return MathExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue[1])), operand2: NewValue(trim(parsedOperandsAndOperatorValue[2])), operator: multiplicationOperator}
+	parsedOperandsAndOperatorValue := StringSlice(spiltWithSpace(expression))
+	mathOperator, _ := toMathOperator(parsedOperandsAndOperatorValue.getOrEmpty(0))
+	return MathExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue.getOrDefault(1, EmptyConstant))),
+		operand2: NewValue(trim(parsedOperandsAndOperatorValue.getOrDefault(2, EmptyConstant))),
+		operator: mathOperator}
 }
 
 // Evaluate works out the expression and returns the result as a string

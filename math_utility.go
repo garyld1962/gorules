@@ -18,6 +18,10 @@ func subtract(operand1, operand2 int) (int, error) {
 	return operand1 - operand2, nil
 }
 
+func square(operand, _ int) (int, error) {
+	return operand * operand, nil
+}
+
 func takeTill(delimiter, input string) (string, error) {
 	return strings.Split(input, delimiter)[0], nil
 }
