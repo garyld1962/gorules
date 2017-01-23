@@ -14,4 +14,4 @@ A business rules engine (BRE) is a software component that allows non-programmer
 
 "When I look for a programming language I'm looking at a tool to solve a problem with a solution I can live with and that solves it    quickly so I can move on to solving the next problem. Go does this well."
 
-** The sample rule and tests are in evaluator_test.go **  
+**The sample rule and tests are in evaluator_test.go**  
