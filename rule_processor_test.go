@@ -50,7 +50,7 @@ var fetcherTestDataString = `{
   "promos": []
 }`
 
-var fetcherTestData = gorules.ParseStringToJSON(fetcherTestDataString)
+var fetcherTestData, _ = gorules.ParseStringToJSON(fetcherTestDataString)
 
 func TestFetchFromFile(t *testing.T) {
 	n := gorules.NewRuleProcessor("is-country-canada").(gorules.RuleFromFile).Fetch()

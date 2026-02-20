@@ -144,9 +144,16 @@ func getInterfaceType(t interface{}) reflect.Kind {
 }
 
 func isArray(i interface{}) bool {
-	return reflect.TypeOf(i).Kind() == reflect.Array || reflect.TypeOf(i).Kind() == reflect.Slice
+	if i == nil {
+		return false
+	}
+	k := reflect.TypeOf(i).Kind()
+	return k == reflect.Array || k == reflect.Slice
 }
 func isMap(i interface{}) bool {
+	if i == nil {
+		return false
+	}
 	return reflect.TypeOf(i).Kind() == reflect.Map
 }
 func getArrayType(arr interface{}) (reflect.Type, error) {
@@ -284,12 +291,12 @@ func getArrayPathAndKey(path string) (string, string) {
 	return strings.Join(s[0:lengt-1], "."), final
 }
 
-func parseStringToJSONObject(jsonAsString string) map[string]interface{} {
+func parseStringToJSONObject(jsonAsString string) (map[string]interface{}, error) {
 	result, err := objects.NewMapFromJSON(jsonAsString)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("parseStringToJSONObject: %w", err)
 	}
-	return result
+	return result, nil
 }
 
 // ParseStringToJSON is exposed to make testing easier
@@ -435,5 +442,8 @@ func first(list []string) string {
 }
 
 func firstExpr(list []Expression) Expression {
+	if len(list) == 0 {
+		return FalseExpression
+	}
 	return list[0]
 }

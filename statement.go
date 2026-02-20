@@ -81,10 +81,10 @@ func (c ConjunctionStatement) ToExpression(_ interface{}) (Expression, error) {
 }
 
 // createConjunctionStmt Creates Conjunction Statement from string
-func createConjunctionStmt(input string) ConjunctionStatement {
+func createConjunctionStmt(input string) (ConjunctionStatement, error) {
 	conjunction, err := toConjunction(input)
 	if err != nil {
-		panic(err)
+		return ConjunctionStatement{Conjunction: And}, fmt.Errorf("createConjunctionStmt: %w", err)
 	}
-	return ConjunctionStatement{Conjunction: conjunction}
+	return ConjunctionStatement{Conjunction: conjunction}, nil
 }

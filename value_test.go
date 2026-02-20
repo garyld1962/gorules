@@ -59,7 +59,8 @@ func TestConstants(t *testing.T) {
 
 func TestPath(t *testing.T) {
 	result := gorules.NewValue("country")
-	str, _ := result.Evaluate(gorules.ParseStringToJSON(valueTestData))
+	testData, _ := gorules.ParseStringToJSON(valueTestData)
+	str, _ := result.Evaluate(testData)
 	fmt.Println(result, str)
 	assert.Equal(t, "SOUTH", str)
 }

@@ -7,6 +7,7 @@ import (
 )
 
 func TestCreateConjunctionStmt(t *testing.T) {
-	conjunction := createConjunctionStmt("AND")
-	assert.Equal(t, (conjunction).Conjunction, And)
+	conjunction, err := createConjunctionStmt("AND")
+	assert.NoError(t, err)
+	assert.Equal(t, conjunction.Conjunction, And)
 }

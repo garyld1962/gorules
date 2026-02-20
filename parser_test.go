@@ -48,7 +48,7 @@ var parserTestDataString = `{
   "promos": []
 }`
 
-var parserTestData = gorules.ParseStringToJSON(parserTestDataString)
+var parserTestData, _ = gorules.ParseStringToJSON(parserTestDataString)
 
 //IF THIS country NOTEQUALS USA |AND| NOTEQUALS CANADA |AND| zip3 EQUALS "333"
 // func TestValue(t *testing.T) {

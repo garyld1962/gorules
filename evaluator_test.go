@@ -49,7 +49,7 @@ var evaluatorTestDataString = `{
   "promos": []
 }`
 
-var evaluatorTestData = gorules.ParseStringToJSON(evaluatorTestDataString)
+var evaluatorTestData, _ = gorules.ParseStringToJSON(evaluatorTestDataString)
 
 func TestCompareValueAndValue(t *testing.T) {
 	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo 'SOUTH A'", evaluatorTestData)

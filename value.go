@@ -45,8 +45,18 @@ type Path struct {
 
 // Evaluate returns the string from the Constant
 func (p Path) Evaluate(data interface{}) (string, error) {
-	// fmt.Println(p, data)
-	return selectValue(data.(map[string]interface{}), p.jsonPath).(string), nil
+	dataMap, ok := data.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("data is not a JSON object")
+	}
+	raw := selectValue(dataMap, p.jsonPath)
+	if raw == nil {
+		return "", nil
+	}
+	if str, ok := raw.(string); ok {
+		return str, nil
+	}
+	return fmt.Sprintf("%v", raw), nil
 }
 
 // String makes Path implement Stringer
@@ -97,7 +107,10 @@ func (m MathExpression) Evaluate(data interface{}) (string, error) {
 	operand2, _ := m.operand2.Evaluate(data)
 	firstOperand, _ := strconv.Atoi(operand1)
 	secondOperand, _ := strconv.Atoi(operand2)
-	mathOperatorFunc := mathOperatorFuncList[m.operator]
+	mathOperatorFunc, ok := mathOperatorFuncList[m.operator]
+	if !ok || mathOperatorFunc == nil {
+		return "", fmt.Errorf("unknown math operator: %v", m.operator)
+	}
 	result, err := mathOperatorFunc(firstOperand, secondOperand)
 	return strconv.Itoa(result), err
 }
@@ -134,7 +147,10 @@ func (m StringExpression) Evaluate(data interface{}) (string, error) {
 	operand1, _ := m.operand1.Evaluate(data)
 	operand2, _ := m.operand2.Evaluate(data)
 	fmt.Println(operand1, "re", operand2)
-	stringOperatorFunc := stringOperatorFuncList[m.operator]
+	stringOperatorFunc, ok := stringOperatorFuncList[m.operator]
+	if !ok || stringOperatorFunc == nil {
+		return "", fmt.Errorf("unknown string operator: %v", m.operator)
+	}
 	result, err := stringOperatorFunc(operand1, operand2)
 	return result, err
 }

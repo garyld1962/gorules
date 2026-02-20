@@ -2,7 +2,6 @@ package gorules
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 )
 
@@ -32,19 +31,32 @@ type RuleFromFile struct {
 
 // Fetch makes RuleFromFile implement RuleFetcher and gets data from rulez file
 func (rt RuleFromFile) Fetch() string {
-	file, e := ioutil.ReadFile("./rulez.json")
-	if e != nil {
-		fmt.Printf("File error: %v\n", e)
-		os.Exit(1)
+	file, err := os.ReadFile("./rulez.json")
+	if err != nil {
+		fmt.Printf("File error: %v\n", err)
+		return ""
 	}
-	x := parseStringToJSONObject(string(file))
-
-	return selectValue(x, rt.ruleName).(string)
+	x, err := parseStringToJSONObject(string(file))
+	if err != nil {
+		fmt.Printf("JSON parse error: %v\n", err)
+		return ""
+	}
+	raw := selectValue(x, rt.ruleName)
+	if raw == nil {
+		return ""
+	}
+	if str, ok := raw.(string); ok {
+		return str
+	}
+	return fmt.Sprintf("%v", raw)
 }
 
 // Process makes RuleFromFile implement RuleProcessor
 func (rt RuleFromFile) Process(data map[string]interface{}) interface{} {
 	rule := rt.Fetch()
+	if rule == "" {
+		return false
+	}
 	return EvaluateRules(rule, data)
 }
 
@@ -119,15 +131,21 @@ func NewRuleObjectCollection(rule map[string]string) RuleProcessor {
 
 // NewRuleProcessor creates a RuleFetcher depending on the input string given
 func NewRuleProcessor(input interface{}) RuleProcessor {
-	_, ok := input.(map[string]string)
-	if isArray(input) {
-		fmt.Println(input, isArray(input), len(input.([]string)))
-		return NewRuleCollection(input.([]string))
-	} else if ok {
-		return RuleObjectCollection(input.(map[string]string))
-	} else if containsSpace(input.(string)) {
-		return RuleText(input.(string))
+	// Check for map[string]string first
+	if mapVal, ok := input.(map[string]string); ok {
+		return RuleObjectCollection(mapVal)
 	}
-
-	return NewRuleFromFile(input.(string))
+	// Check for []string (direct Go callers)
+	if strSlice, ok := input.([]string); ok {
+		return NewRuleCollection(strSlice)
+	}
+	// Check for string
+	if str, ok := input.(string); ok {
+		if containsSpace(str) {
+			return RuleText(str)
+		}
+		return NewRuleFromFile(str)
+	}
+	// Fallback: return a RuleText that will evaluate to false
+	return RuleText("")
 }

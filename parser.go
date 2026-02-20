@@ -42,7 +42,8 @@ func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {
 				ruleToEvaluate = ruleToEvaluate.Add(valueExpr)
 				toParse = ""
 			}
-			conjExpr, _ := createConjunctionStmt(word).ToExpression(jsonObj)
+			conjStmt, _ := createConjunctionStmt(word)
+			conjExpr, _ := conjStmt.ToExpression(jsonObj)
 			// fmt.Println("conjExpr", conjExpr)
 			ruleToEvaluate = ruleToEvaluate.Add(conjExpr)
 		}
@@ -73,7 +74,8 @@ func precedenceParserRecursive(accum Rule, pushInExistingRule bool, lines []stri
 
 	if pushInExistingRule {
 		if isConjunction(linetoWorkOn) {
-			conjExpr, _ := createConjunctionStmt(linetoWorkOn).ToExpression(jsonObj)
+			conjStmt, _ := createConjunctionStmt(linetoWorkOn)
+			conjExpr, _ := conjStmt.ToExpression(jsonObj)
 			accum = accum.Add(conjExpr)
 			return precedenceParserRecursive(accum, true, lines[1:], jsonObj)
 		} else if endsWithConjunction(linetoWorkOn) {

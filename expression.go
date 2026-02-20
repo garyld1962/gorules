@@ -16,26 +16,29 @@ type RuleExpression struct {
 
 // Evaluate used to eval an expression to a bool
 func (v RuleExpression) Evaluate() (bool, error) {
-	operatorFunc := operatorFuncList[v.Operator]
+	operatorFunc, ok := operatorFuncList[v.Operator]
+	if !ok || operatorFunc == nil {
+		return false, fmt.Errorf("no implementation for operator %s", v.Operator)
+	}
 	result, err := operatorFunc(v.Value, v.Target)
 	fmt.Println("Evaluate", v, result)
 	return result, err
 }
 
-func createRuleExpression(operatorText string, value string) Expression {
+func createRuleExpression(operatorText string, value string) (Expression, error) {
 	operator, err := toOperator(operatorText)
-	if err == nil {
-		return RuleExpression{Operator: operator, Value: value}
+	if err != nil {
+		return FalseExpression, fmt.Errorf("createRuleExpression: %w", err)
 	}
-	panic(err)
+	return RuleExpression{Operator: operator, Value: value}, nil
 }
 
-func createRuleExpressionWithTarget(operatorText string, value string, target string) Expression {
+func createRuleExpressionWithTarget(operatorText string, value string, target string) (Expression, error) {
 	operator, err := toOperator(operatorText)
-	if err == nil {
-		return RuleExpression{Operator: operator, Value: value, Target: target}
+	if err != nil {
+		return FalseExpression, fmt.Errorf("createRuleExpressionWithTarget: %w", err)
 	}
-	panic(err)
+	return RuleExpression{Operator: operator, Value: value, Target: target}, nil
 }
 
 func createRuleExpressionFromRuleStmt(rule RuleStatement, data map[string]interface{}) Expression {
@@ -43,7 +46,8 @@ func createRuleExpressionFromRuleStmt(rule RuleStatement, data map[string]interf
 	// fmt.Println("target", rule.Source, rule.Target.Evaluate(data))
 	source, _ := rule.Source.Evaluate(data)
 	target, _ := rule.Target.Evaluate(data)
-	return createRuleExpressionWithTarget(rule.Operator, decodeSpace(source), decodeSpace(target))
+	expr, _ := createRuleExpressionWithTarget(rule.Operator, decodeSpace(source), decodeSpace(target))
+	return expr
 }
 
 // ConjunctionExpression used to combine any type of Expressions
@@ -84,20 +88,32 @@ func createConjunctionExpression(conjunction Conjunction) func(Expression) Expre
 
 func createConjuntionExprFromCollectionStmt(ruleStmt RuleStatement, data map[string]interface{}) Expression {
 	selector, err := toSelector(ruleStmt.Selector)
-
 	if err != nil {
-		panic(err)
+		return FalseExpression
 	}
 
 	conjExpr := selectorConjExprMap(selector)
 	arrayPath, key := getArrayPathAndKey(ruleStmt.Source.String())
-	arrayValue := selectValue(data, arrayPath).([]interface{})
+	rawArray := selectValue(data, arrayPath)
+	arrayValue, ok := rawArray.([]interface{})
+	if !ok {
+		return FalseExpression
+	}
 
 	for _, x := range arrayValue {
-		valueToCompare := selectValue(x.(map[string]interface{}), key).(string)
+		xMap, ok := x.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		rawVal := selectValue(xMap, key)
+		var valueToCompare string
+		if str, ok := rawVal.(string); ok {
+			valueToCompare = str
+		} else {
+			valueToCompare = fmt.Sprintf("%v", rawVal)
+		}
 		target, _ := ruleStmt.Target.Evaluate(x)
-		valExp := createRuleExpressionWithTarget(ruleStmt.Operator, valueToCompare, target)
-
+		valExp, _ := createRuleExpressionWithTarget(ruleStmt.Operator, valueToCompare, target)
 		conjExpr = conjExpr.Add(valExp)
 	}
 	return conjExpr
