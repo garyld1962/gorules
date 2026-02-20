@@ -29,9 +29,17 @@ type RuleFromFile struct {
 	ruleName string
 }
 
+// RuleFilePath is the path to the rules JSON file. Override via GORULES_FILE_PATH env var.
+var RuleFilePath = func() string {
+	if p := os.Getenv("GORULES_FILE_PATH"); p != "" {
+		return p
+	}
+	return "./rulez.json"
+}()
+
 // Fetch makes RuleFromFile implement RuleFetcher and gets data from rulez file
 func (rt RuleFromFile) Fetch() string {
-	file, err := os.ReadFile("./rulez.json")
+	file, err := os.ReadFile(RuleFilePath)
 	if err != nil {
 		fmt.Printf("File error: %v\n", err)
 		return ""
