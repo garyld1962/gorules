@@ -56,7 +56,7 @@ func isGreaterOrEqual(v, t string) (bool, error) {
 		return false, err
 	}
 
-	return val1 > val2, nil
+	return val1 >= val2, nil
 
 }
 
@@ -71,7 +71,7 @@ func isLessOrEqual(v, t string) (bool, error) {
 		return false, err
 	}
 
-	return val1 < val2, nil
+	return val1 <= val2, nil
 
 }
 
@@ -109,7 +109,7 @@ func isFalse(value, target string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return r, nil
+	return !r, nil
 }
 
 func contains(value, target string) (bool, error) {
@@ -219,12 +219,13 @@ func selectValue(m map[string]interface{}, path string) interface{} {
 	if len(propertyNames) == 1 {
 		return m[propertyNames[0]]
 	}
-	// create map using propertyName as a key and the []interface{} as a value
-	m1 := make(map[string]interface{})
-	m1[propertyNames[0]] = m[propertyNames[0]]
-	// create a new path with the remainder of the parts.
-	newPath := strings.Join(propertyNames[2:], ",")
-	return selectValue(m1, newPath)
+	// traverse into the nested map
+	next, ok := m[propertyNames[0]].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+	newPath := strings.Join(propertyNames[1:], ".")
+	return selectValue(next, newPath)
 }
 
 func getValue(m map[string]interface{}, path string) (bool, interface{}) {

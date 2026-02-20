@@ -112,7 +112,7 @@ func TestWithPrecedence(t *testing.T) {
 					   		 state IsEqualTo 'L'`
 	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
 	fmt.Println(result)
-	assert.False(t, false)
+	assert.False(t, result)
 }
 
 func TestWithPrecedenceOne(t *testing.T) {
@@ -123,10 +123,10 @@ func TestWithPrecedenceOne(t *testing.T) {
 					       state IsEqualTo 'L'`
 	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
 	fmt.Println(result)
-	assert.False(t, false)
+	assert.False(t, result)
 }
 
 func TestMaths(t *testing.T) {
-	result := gorules.EvaluateRules("'SOUTH' IsEqualTo |TAKETILL '-' 'SOTH-'|", evaluatorTestData)
+	result := gorules.EvaluateRules("'SOUTH' IsEqualTo |TAKETILL '-' 'SOUTH-'|", evaluatorTestData)
 	assert.True(t, result)
 }

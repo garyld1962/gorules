@@ -59,5 +59,6 @@ func isOperator(value string) bool {
 type operatorFunc func(string, string) (bool, error)
 
 var operatorFuncList = map[Operator]operatorFunc{
-	IsEqualTo: equals,
+	IsEqualTo:     equals,
+	IsGreaterThan: isGreater,
 }

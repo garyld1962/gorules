@@ -61,12 +61,12 @@ func TestFetchFromRuleCollection(t *testing.T) {
 	rules := []string{"country IsEqualTo 'USA'", "is-country-canada"}
 	n := gorules.NewRuleProcessor(rules).(gorules.RuleCollection).Process(fetcherTestData)
 	fmt.Println(n)
-	assert.True(t, true)
+	assert.NotNil(t, n)
 }
 
 func TestFetchFromObjectCollection(t *testing.T) {
 	rules := map[string]string{"is-country-usa": "country IsEqualTo 'USA'", "is-country-canada": "is-country-canada"}
 	n := gorules.NewRuleProcessor(rules).(gorules.RuleObjectCollection).Process(fetcherTestData)
 	fmt.Println(n)
-	assert.True(t, true)
+	assert.NotNil(t, n)
 }
