@@ -11,21 +11,16 @@ import (
 	"github.com/stretchr/stew/objects"
 )
 
-func in(v, t string) bool {
-	return strings.Contains(v, t)
-}
-
 func equals(value, target string) (bool, error) {
 	return value == target, nil
 }
 
 func isMatch(value, target string) (bool, error) {
-
-	reg, err := regexp.Compile(value)
+	reg, err := regexp.Compile(target)
 	if err != nil {
 		return false, err
 	}
-	return reg.MatchString(target), nil
+	return reg.MatchString(value), nil
 }
 
 func isGreater(v, t string) (bool, error) {
@@ -83,13 +78,11 @@ func getNumber(v string) (float64, error) {
 }
 
 func isNull(value, target string) (bool, error) {
-
-	return target == "", nil
+	return value == "", nil
 }
 
 func isNotNull(value, target string) (bool, error) {
-
-	return target != "", nil
+	return value != "", nil
 }
 
 func isTrue(value, target string) (bool, error) {
@@ -205,10 +198,10 @@ func isInArray(arr, val interface{}) (bool, error) {
 			return false, nil
 
 		default:
-
+			return false, fmt.Errorf("unsupported type for array membership check: %T", val)
 		}
 	}
-	return true, nil
+	return false, nil
 }
 func selectValue(m map[string]interface{}, path string) interface{} {
 
@@ -283,7 +276,9 @@ func parseStringToJSONObject(jsonAsString string) (map[string]interface{}, error
 }
 
 // ParseStringToJSON is exposed to make testing easier
-var ParseStringToJSON = parseStringToJSONObject
+func ParseStringToJSON(jsonAsString string) (map[string]interface{}, error) {
+	return parseStringToJSONObject(jsonAsString)
+}
 
 func startsWithIdentifier(toStartValue string) func(stringToCheck string) bool {
 	return func(stringToCheck string) bool {

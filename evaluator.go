@@ -1,18 +1,5 @@
 package gorules
 
-// RuleEvaluator has to be implemented by anything that needs to be converted to a rule
-type RuleEvaluator interface {
-	Evaluate(string, map[string]interface{}) bool
-}
-
-// ruleEvaluatorFunc is to enable any function to implement RuleEvaluator interface
-type ruleEvaluatorFunc func(string, map[string]interface{}) bool
-
-// Parse Make any function that has RuleParserFunc type signature to become RuleParser
-func (fn ruleEvaluatorFunc) Evaluate(rule string, dataAsJSON map[string]interface{}) bool {
-	return fn(rule, dataAsJSON)
-}
-
 func evaluator(parser ruleParserFunc) func(string, map[string]interface{}) bool {
 
 	return func(rule string, data map[string]interface{}) bool {
@@ -22,7 +9,15 @@ func evaluator(parser ruleParserFunc) func(string, map[string]interface{}) bool 
 	}
 }
 
-// DSLEvaluator evaluates DSL to a bool with function ParseDSL
-var DSLEvaluator = evaluator(ParseDSL)
+var dslEvaluator = evaluator(parseDSL)
+var evaluateRulesFunc = evaluator(parseDSLWithPrecedence)
 
-var EvaluateRules = ruleEvaluatorFunc(evaluator(ParseDSLWithPrecedence))
+// DSLEvaluator evaluates DSL to a bool with function parseDSL
+func DSLEvaluator(rule string, data map[string]interface{}) bool {
+	return dslEvaluator(rule, data)
+}
+
+// EvaluateRules evaluates DSL with precedence parsing
+func EvaluateRules(rule string, data map[string]interface{}) bool {
+	return evaluateRulesFunc(rule, data)
+}

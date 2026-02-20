@@ -155,7 +155,7 @@ func TestIsNullEmpty(t *testing.T) {
 }
 
 func TestIsNullNonEmpty(t *testing.T) {
-	result, err := isNull("", "value")
+	result, err := isNull("value", "")
 	assert.NoError(t, err)
 	assert.False(t, result)
 }
@@ -167,7 +167,7 @@ func TestIsNotNullEmpty(t *testing.T) {
 }
 
 func TestIsNotNullNonEmpty(t *testing.T) {
-	result, err := isNotNull("", "value")
+	result, err := isNotNull("value", "")
 	assert.NoError(t, err)
 	assert.True(t, result)
 }
@@ -261,18 +261,18 @@ func TestIsMapValid(t *testing.T) {
 // isMatch test
 
 func TestIsMatchPass(t *testing.T) {
-	result, err := isMatch("^SOUTH.*", "SOUTH AMERICA")
+	result, err := isMatch("SOUTH AMERICA", "^SOUTH.*")
 	assert.NoError(t, err)
 	assert.True(t, result)
 }
 
 func TestIsMatchFail(t *testing.T) {
-	result, err := isMatch("^NORTH.*", "SOUTH AMERICA")
+	result, err := isMatch("SOUTH AMERICA", "^NORTH.*")
 	assert.NoError(t, err)
 	assert.False(t, result)
 }
 
 func TestIsMatchInvalidRegex(t *testing.T) {
-	_, err := isMatch("[invalid", "test")
+	_, err := isMatch("test", "[invalid")
 	assert.Error(t, err)
 }

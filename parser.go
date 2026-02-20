@@ -1,23 +1,13 @@
 package gorules
 
-// RuleParser has to be implemented by anything that needs to be converted to a rule
-type RuleParser interface {
-	Parse(string, map[string]interface{}) Expression
-}
-
-// ruleParserFunc is to enable any function to implement RuleParser interface
+// ruleParserFunc is a function type for DSL parsing
 type ruleParserFunc func(string, map[string]interface{}) Expression
 
-// Parse Make any function that has RuleParserFunc type signature to become RuleParser
-func (fn ruleParserFunc) Parse(dslText string, dataAsJSON map[string]interface{}) Expression {
-	return fn(dslText, dataAsJSON)
-}
+// parseDSL parses the DSL with space and creates Rule
+var parseDSL = ruleParserFunc(parseDSLToExpr)
 
-//ParseDSL parses the DSL with space and creates Rule
-var ParseDSL = ruleParserFunc(parseDSLToExpr)
-
-// ParseDSLWithPrecedence parses DSL with new lines and precedence
-var ParseDSLWithPrecedence = ruleParserFunc(precedenceParser)
+// parseDSLWithPrecedence parses DSL with new lines and precedence
+var parseDSLWithPrecedence = ruleParserFunc(precedenceParser)
 
 func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {
 	var ruleToEvaluate = Rule{}

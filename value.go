@@ -116,8 +116,7 @@ func (m MathExpression) Evaluate(data interface{}) (string, error) {
 }
 
 func (m MathExpression) String() string {
-	dummyValue, _ := m.operand1.Evaluate(make([]interface{}, 0))
-	return dummyValue
+	return m.operand1.String()
 }
 
 // StringExpression is used to evaluate strings expressions on json values
@@ -137,8 +136,7 @@ func NewStringExpression(expression string) StringExpression {
 }
 
 func (m StringExpression) String() string {
-	dummyValue, _ := m.operand1.Evaluate(make([]interface{}, 0))
-	return dummyValue
+	return m.operand1.String()
 }
 
 // Evaluate works out the expression and returns the result as a string
