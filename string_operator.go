@@ -21,7 +21,7 @@ var stringOperatorNames = [...]string{
 	ToLower:  "TOLOWER",
 }
 
-// String makes MathOperator implement Stringer
+// String makes StringOperator implement Stringer
 func (o StringOperator) String() string {
 	if o >= maxStringOperatorFlag {
 		return "Invalid String Operator"
@@ -29,7 +29,7 @@ func (o StringOperator) String() string {
 	return stringOperatorNames[o]
 }
 
-// toMathOperator converts string to one of the operatorNames in const declaration
+// toStringOperator converts string to one of the operatorNames in const declaration
 func toStringOperator(s string) (StringOperator, error) {
 	for i, r := range stringOperatorNames {
 		if s == r {
@@ -39,7 +39,7 @@ func toStringOperator(s string) (StringOperator, error) {
 	return maxStringOperatorFlag, fmt.Errorf("Invalid String Operator value %q", s)
 }
 
-// isOperator check if a string is a Operator Names
+// isStringOperator checks if a string is a StringOperator name
 func isStringOperator(value string) bool {
 	_, err := toStringOperator(value)
 	if err == nil {

@@ -74,18 +74,18 @@ func conjunctionFunction(conjunction Conjunction) conjunctionFunc {
 	return conjunctionFuncList[conjunction]
 }
 
-func identityBool(conjuntion Conjunction) Expression {
-	return identityBoolForConjunction[conjuntion]
+func identityBool(conjunction Conjunction) Expression {
+	return identityBoolForConjunction[conjunction]
 }
 
-// conjunctionExprProperties returns the conjuntion function used for evaluation and the seed value
+// conjunctionExprProperties returns the conjunction function used for evaluation and the seed value
 func conjunctionExprProperties(conjunction Conjunction) (conjunctionFunc, Expression) {
 	return conjunctionFunction(conjunction), identityBool(conjunction)
 }
 
 func endsWithConjunction(input string) bool {
 
-	strList := spiltWithSpace(trim(input))
+	strList := splitWithSpace(trim(input))
 
 	if len(strList) > 1 {
 		lstElmt := lastElement(strList)

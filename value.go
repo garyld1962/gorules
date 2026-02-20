@@ -75,7 +75,7 @@ func NewValue(value string) Value {
 	if startsWithSingleQuotes(value) {
 		return NewConstant(value)
 	} else if startsWithPipe(value) {
-		x := spiltWithSpace(stringBetweenPipe(value))[0]
+		x := splitWithSpace(stringBetweenPipe(value))[0]
 		if isMathOperator(x) {
 			return NewMathExpression(decodeSpace(stringBetweenPipe(value)))
 		}
@@ -94,7 +94,7 @@ type MathExpression struct {
 
 //NewMathExpression is a wrapper around MathExpression
 func NewMathExpression(expression string) MathExpression {
-	parsedOperandsAndOperatorValue := StringSlice(spiltWithSpace(expression))
+	parsedOperandsAndOperatorValue := StringSlice(splitWithSpace(expression))
 	mathOperator, _ := toMathOperator(parsedOperandsAndOperatorValue.getOrEmpty(0))
 	return MathExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue.getOrDefault(1, EmptyConstant))),
 		operand2: NewValue(trim(parsedOperandsAndOperatorValue.getOrDefault(2, EmptyConstant))),
@@ -129,8 +129,7 @@ type StringExpression struct {
 
 //NewStringExpression is a wrapper around StringExpression
 func NewStringExpression(expression string) StringExpression {
-	parsedOperandsAndOperatorValue := StringSlice(spiltWithSpace(expression))
-	fmt.Println(expression, parsedOperandsAndOperatorValue)
+	parsedOperandsAndOperatorValue := StringSlice(splitWithSpace(expression))
 	stringOperator, _ := toStringOperator(parsedOperandsAndOperatorValue.getOrEmpty(0))
 	return StringExpression{operand1: NewValue(trim(parsedOperandsAndOperatorValue.getOrDefault(1, EmptyConstant))),
 		operand2: NewValue(trim(parsedOperandsAndOperatorValue.getOrDefault(2, EmptyConstant))),
@@ -146,7 +145,6 @@ func (m StringExpression) String() string {
 func (m StringExpression) Evaluate(data interface{}) (string, error) {
 	operand1, _ := m.operand1.Evaluate(data)
 	operand2, _ := m.operand2.Evaluate(data)
-	fmt.Println(operand1, "re", operand2)
 	stringOperatorFunc, ok := stringOperatorFuncList[m.operator]
 	if !ok || stringOperatorFunc == nil {
 		return "", fmt.Errorf("unknown string operator: %v", m.operator)

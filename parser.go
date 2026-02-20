@@ -5,7 +5,7 @@ type RuleParser interface {
 	Parse(string, map[string]interface{}) Expression
 }
 
-// ruleParserFunc is to enable any function to implemente RuleParser interface
+// ruleParserFunc is to enable any function to implement RuleParser interface
 type ruleParserFunc func(string, map[string]interface{}) Expression
 
 // Parse Make any function that has RuleParserFunc type signature to become RuleParser
@@ -20,12 +20,11 @@ var ParseDSL = ruleParserFunc(parseDSLToExpr)
 var ParseDSLWithPrecedence = ruleParserFunc(precedenceParser)
 
 func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {
-	// fmt.Println("2", dslText)
 	var ruleToEvaluate = Rule{}
 	var latestRuleStmt Expressionable
 	var toParse string
 
-	words := spiltWithSpace(dslText)
+	words := splitWithSpace(dslText)
 
 	for _, word := range words {
 
@@ -33,34 +32,24 @@ func parseDSLToExpr(dslText string, jsonObj map[string]interface{}) Expression {
 
 		if !isConjunction(word) {
 			toParse = concatStrings(toParse, word, " ")
-			// fmt.Println("toParse", word, toParse)
 		} else {
 			if notEmpty(toParse) {
 				latestRuleStmt = createRuleStmtFromExisting(latestRuleStmt, trim(toParse))
-				// fmt.Println("latestRuleStmt", latestRuleStmt)
 				valueExpr, _ := latestRuleStmt.ToExpression(jsonObj)
 				ruleToEvaluate = ruleToEvaluate.Add(valueExpr)
 				toParse = ""
 			}
 			conjStmt, _ := createConjunctionStmt(word)
 			conjExpr, _ := conjStmt.ToExpression(jsonObj)
-			// fmt.Println("conjExpr", conjExpr)
 			ruleToEvaluate = ruleToEvaluate.Add(conjExpr)
 		}
-		// fmt.Println("2", ruleToEvaluate)
 	}
 
 	if notEmpty(toParse) {
 		latestRuleStmt = createRuleStmtFromExisting(latestRuleStmt, trim(toParse))
 		lastRuleExpr, _ := latestRuleStmt.ToExpression(jsonObj)
-		// fmt.Println("1", lastRuleExpr)
 		ruleToEvaluate = ruleToEvaluate.Add(lastRuleExpr)
 	}
-	// for x, test := range ruleToEvaluate.expressions {
-	// 	fmt.Println(x, "Expression Inner", test)
-	// }
-	// out, _ := ruleToEvaluate.Evaluate()
-	// fmt.Println("3", ruleToEvaluate, out)
 	return ruleToEvaluate
 }
 
@@ -70,25 +59,25 @@ func precedenceParserRecursive(accum Rule, pushInExistingRule bool, lines []stri
 		return accum
 	}
 
-	var linetoWorkOn = first(lines)
+	var lineToWorkOn = first(lines)
 
 	if pushInExistingRule {
-		if isConjunction(linetoWorkOn) {
-			conjStmt, _ := createConjunctionStmt(linetoWorkOn)
+		if isConjunction(lineToWorkOn) {
+			conjStmt, _ := createConjunctionStmt(lineToWorkOn)
 			conjExpr, _ := conjStmt.ToExpression(jsonObj)
 			accum = accum.Add(conjExpr)
 			return precedenceParserRecursive(accum, true, lines[1:], jsonObj)
-		} else if endsWithConjunction(linetoWorkOn) {
-			rule := parseDSLToExpr(linetoWorkOn, jsonObj).(Rule)
+		} else if endsWithConjunction(lineToWorkOn) {
+			rule := parseDSLToExpr(lineToWorkOn, jsonObj).(Rule)
 			rule = rule.Add(precedenceParserRecursive(rule, false, lines[1:], jsonObj))
 			return rule
 		} else {
-			expr := parseDSLToExpr(linetoWorkOn, jsonObj)
+			expr := parseDSLToExpr(lineToWorkOn, jsonObj)
 			accum = accum.Add(expr)
 			return precedenceParserRecursive(accum, true, lines[1:], jsonObj)
 		}
 	} else {
-		rule := parseDSLToExpr(linetoWorkOn, jsonObj).(Rule)
+		rule := parseDSLToExpr(lineToWorkOn, jsonObj).(Rule)
 		return rule
 	}
 }

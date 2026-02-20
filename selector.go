@@ -52,8 +52,8 @@ type selectorFunc func(RuleStatement, map[string]interface{}) Expression
 
 var selectorFuncList = map[Selector]selectorFunc{
 	This: createRuleExpressionFromRuleStmt,
-	Any:  createConjuntionExprFromCollectionStmt,
-	All:  createConjuntionExprFromCollectionStmt,
+	Any:  createConjunctionExprFromCollectionStmt,
+	All:  createConjunctionExprFromCollectionStmt,
 }
 
 var selectorConjExprList = map[Selector]ConjunctionExpression{

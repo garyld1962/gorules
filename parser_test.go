@@ -50,14 +50,6 @@ var parserTestDataString = `{
 
 var parserTestData, _ = gorules.ParseStringToJSON(parserTestDataString)
 
-//IF THIS country NOTEQUALS USA |AND| NOTEQUALS CANADA |AND| zip3 EQUALS "333"
-// func TestValue(t *testing.T) {
-// 	//	m := gorules.ParseDSL("country IsEqualTo USA |AND| country IsEqualTo USA |AND| state IsEqualTo FL |AND| IF THIS subtotal IsEqualTo 25.0", parserTestData)
-// 	result := gorules.EvaluateDSL("country IsEqualTo CANADA AND country IsEqualTo INDIA AND country IsEqualTo USA", parserTestData)
-// 	fmt.Println(result)
-// 	assert.NotNil(t, result)
-// }
-
 func TestCollectionalue(t *testing.T) {
 	result := gorules.DSLEvaluator("'SOUTH A' IsEqualTo country", parserTestData)
 	assert.True(t, result)

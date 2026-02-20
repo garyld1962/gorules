@@ -1,7 +1,6 @@
 package gorules_test
 
 import (
-	"fmt"
 	"gorules"
 	"testing"
 
@@ -111,7 +110,6 @@ func TestWithPrecedence(t *testing.T) {
 					        country IsEqualTo 'CANADA' AND
 					   		 state IsEqualTo 'L'`
 	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
-	fmt.Println(result)
 	assert.False(t, result)
 }
 
@@ -122,7 +120,6 @@ func TestWithPrecedenceOne(t *testing.T) {
 					   	   OR
 					       state IsEqualTo 'L'`
 	result := gorules.EvaluateRules(testStringSlice, evaluatorTestData)
-	fmt.Println(result)
 	assert.False(t, result)
 }
 

@@ -72,10 +72,8 @@ type RuleCollection []string
 func (rt RuleCollection) Fetch() []RuleProcessor {
 	ruleCollection := make([]RuleProcessor, 0)
 	for _, toProcess := range rt {
-		fmt.Println(toProcess, len(rt))
 		ruleCollection = append(ruleCollection, NewRuleProcessor(toProcess))
 	}
-	fmt.Println(ruleCollection, len(rt))
 
 	return ruleCollection
 }
@@ -106,18 +104,14 @@ func (rt RuleObjectCollection) Fetch() map[string]RuleProcessor {
 		ruleCollection[k] = NewRuleProcessor(v)
 	}
 
-	fmt.Println(ruleCollection, len(rt))
-
 	return ruleCollection
 }
 
 // Process makes RuleCollection implement RuleProcessor
 func (rt RuleObjectCollection) Process(data map[string]interface{}) interface{} {
-	fmt.Println(rt)
 	rules := rt.Fetch()
 	var resultCollection = make(map[string]bool)
 	for k, v := range rules {
-		fmt.Println(v)
 		resultCollection[k] = v.Process(data).(bool)
 	}
 

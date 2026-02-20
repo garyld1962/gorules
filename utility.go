@@ -2,13 +2,11 @@ package gorules
 
 import (
 	"bytes"
-	"errors"
+	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"fmt"
 
 	"github.com/stretchr/stew/objects"
 )
@@ -156,13 +154,6 @@ func isMap(i interface{}) bool {
 	}
 	return reflect.TypeOf(i).Kind() == reflect.Map
 }
-func getArrayType(arr interface{}) (reflect.Type, error) {
-
-	if (isArray(arr)) == false {
-		return nil, errors.New("value is not an arry or slice")
-	}
-	return reflect.TypeOf(arr).Elem(), nil
-}
 func isInArray(arr, val interface{}) (bool, error) {
 	switch reflect.TypeOf(arr).Kind() {
 	case reflect.Slice, reflect.Array:
@@ -235,14 +226,6 @@ func selectValue(m map[string]interface{}, path string) interface{} {
 	return selectValue(next, newPath)
 }
 
-func getValue(m map[string]interface{}, path string) (bool, interface{}) {
-	propertyNames := strings.Split(path, ".")
-	if len(propertyNames) == 1 && m[propertyNames[0]] != nil {
-		return true, m[propertyNames[0]]
-	}
-	return false, nil
-}
-
 func reverse(value []string) []string {
 	result := []string{}
 	for i := len(value) - 1; i >= 0; i-- {
@@ -274,21 +257,21 @@ func splitString(delimiter string) func(string) []string {
 	}
 }
 
-var spiltWithSpace = splitString(" ")
+var splitWithSpace = splitString(" ")
 
-var spiltWithNewLine = splitString("\n")
+var splitWithNewLine = splitString("\n")
 
-var spiltWithDot = splitString(".")
+var splitWithDot = splitString(".")
 
 func lines(input string) StringSlice {
-	return StringSlice(spiltWithNewLine(input)).Map(trim)
+	return StringSlice(splitWithNewLine(input)).Map(trim)
 }
 
 func getArrayPathAndKey(path string) (string, string) {
-	s := spiltWithDot(path)
-	lengt := len(s)
-	final := s[lengt-1]
-	return strings.Join(s[0:lengt-1], "."), final
+	s := splitWithDot(path)
+	length := len(s)
+	final := s[length-1]
+	return strings.Join(s[0:length-1], "."), final
 }
 
 func parseStringToJSONObject(jsonAsString string) (map[string]interface{}, error) {
@@ -338,7 +321,7 @@ func operandsAndOperatorBetween(delimiter string) func(input string) []string {
 	}
 }
 
-//stringBetweenSingleQuotes parses string between delimitter
+//stringBetweenSingleQuotes parses string between delimiter
 var stringBetweenSingleQuotes = stringBetween("'")
 
 var stringBetweenPipe = stringBetween("|")
@@ -373,7 +356,6 @@ func decodeSpace(input string) string {
 
 func encodeString(input string) string {
 	x := recursiveEncodeWithPipe("", recursiveEncodeWithQuotes("", input))
-	fmt.Println("ES", recursiveEncodeWithQuotes("", input), x)
 	return x
 }
 
@@ -397,23 +379,6 @@ func recursiveEncodeWith(delimiter string) func(string, string) string {
 
 var recursiveEncodeWithQuotes = recursiveEncodeWith("'")
 var recursiveEncodeWithPipe = recursiveEncodeWith("|")
-var RRecursiveEncodeWithPipe = recursiveEncodeWith("|")
-
-func recursiveSpaceEncode(accum, input string) string {
-	v := strings.Count(input, "'")
-	if v == 0 {
-		return accum + input
-	}
-
-	arr := strings.SplitN(input, "'", 2)
-	current := arr[0]
-	remaining := arr[1]
-	if v%2 != 0 {
-		current = surroundBySingleQuotes(encodeSpace(current))
-	}
-	return recursiveSpaceEncode(accum+current, remaining)
-}
-
 func notEmpty(input string) bool {
 	return input != ""
 }
@@ -427,7 +392,7 @@ func lastButAllElements(arr []string) []string {
 }
 
 func makeLastWordFirst(input string) string {
-	strList := spiltWithSpace(trim(input))
+	strList := splitWithSpace(trim(input))
 	lstElmt := lastElement(strList)
 	lstButAll := lastButAllElements(strList)
 	swapped := append([]string{lstElmt}, lstButAll...)

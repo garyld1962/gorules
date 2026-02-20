@@ -21,7 +21,6 @@ func (v RuleExpression) Evaluate() (bool, error) {
 		return false, fmt.Errorf("no implementation for operator %s", v.Operator)
 	}
 	result, err := operatorFunc(v.Value, v.Target)
-	fmt.Println("Evaluate", v, result)
 	return result, err
 }
 
@@ -43,7 +42,6 @@ func createRuleExpressionWithTarget(operatorText string, value string, target st
 
 func createRuleExpressionFromRuleStmt(rule RuleStatement, data map[string]interface{}) Expression {
 
-	// fmt.Println("target", rule.Source, rule.Target.Evaluate(data))
 	source, _ := rule.Source.Evaluate(data)
 	target, _ := rule.Target.Evaluate(data)
 	expr, _ := createRuleExpressionWithTarget(rule.Operator, decodeSpace(source), decodeSpace(target))
@@ -59,13 +57,12 @@ type ConjunctionExpression struct {
 // Evaluate used to get the combined evaluated value of all the expressions using the Conjunction
 func (c ConjunctionExpression) Evaluate() (bool, error) {
 
-	evaluator, accumlator := conjunctionExprProperties(c.Conjunction)
-	// fmt.Println(c.Expressions)
+	evaluator, accumulator := conjunctionExprProperties(c.Conjunction)
 	for _, e := range c.Expressions {
-		var resultBool, _ = evaluator(accumlator, (e))
-		accumlator = createBooleanExpression(resultBool)
+		var resultBool, _ = evaluator(accumulator, (e))
+		accumulator = createBooleanExpression(resultBool)
 	}
-	return accumlator.Evaluate()
+	return accumulator.Evaluate()
 }
 
 // Add the expression to be evaluated into the conjunction espression
@@ -86,7 +83,7 @@ func createConjunctionExpression(conjunction Conjunction) func(Expression) Expre
 	}
 }
 
-func createConjuntionExprFromCollectionStmt(ruleStmt RuleStatement, data map[string]interface{}) Expression {
+func createConjunctionExprFromCollectionStmt(ruleStmt RuleStatement, data map[string]interface{}) Expression {
 	selector, err := toSelector(ruleStmt.Selector)
 	if err != nil {
 		return FalseExpression
@@ -121,7 +118,7 @@ func createConjuntionExprFromCollectionStmt(ruleStmt RuleStatement, data map[str
 
 func isConjunctionExpression(expr Expression) bool {
 	_, ok := expr.(ConjunctionExpression)
-	// fmt.Println("conv", x, ok)
+
 	return ok
 }
 

@@ -30,22 +30,20 @@ func (r RuleStatement) ToExpression(data interface{}) (Expression, error) {
 // createRuleStmt creates a RuleStatement with defaults
 func createRuleStmt(input string) RuleStatement {
 
-	parsed := StringSlice(reverse(spiltWithSpace(encodeString(input))))
-	fmt.Println("createRuleStmt", input, parsed, encodeString(input), NewValue(parsed.getOrEmpty(0)))
+	parsed := StringSlice(reverse(splitWithSpace(encodeString(input))))
 	ruleStmt := RuleStatement{
 		Target:   NewValue(parsed.getOrEmpty(0)),
 		Source:   NewValue(parsed.getOrDefault(2, "data")),
 		Operator: parsed.getOrEmpty(1),
 		Selector: parsed.getOrDefault(3, "THIS"),
 		Branch:   parsed.getOrDefault(4, "IF")}
-	fmt.Println("ruleStmt", ruleStmt)
 	return ruleStmt
 }
 
 // createRuleStmtFromExisting creates a RuleStatement and fills the missing values from the existingRule provided
 func createRuleStmtFromExisting(existingRule Expressionable, input string) RuleStatement {
 
-	parsed := StringSlice(reverse(spiltWithSpace(encodeString(input))))
+	parsed := StringSlice(reverse(splitWithSpace(encodeString(input))))
 	var rule RuleStatement
 	if existingRule != nil {
 		existRuleVal := existingRule.(RuleStatement)
@@ -59,7 +57,6 @@ func createRuleStmtFromExisting(existingRule Expressionable, input string) RuleS
 	} else {
 		rule = createRuleStmt(input)
 	}
-	fmt.Println("rule", rule)
 	return rule
 }
 

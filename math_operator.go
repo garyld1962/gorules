@@ -37,7 +37,6 @@ func (o MathOperator) String() string {
 
 // toMathOperator converts string to one of the operatorNames in const declaration
 func toMathOperator(s string) (MathOperator, error) {
-	fmt.Println("to Math Operator invoked ", s)
 	for i, r := range mathOperatorNames {
 		if s == r {
 			return MathOperator(i), nil
