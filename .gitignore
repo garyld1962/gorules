@@ -26,3 +26,9 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# Local AI session tooling — never published (skills live in savviety-skills)
+.claude/
+.code-review/
+.remember/
+CLAUDE.md
